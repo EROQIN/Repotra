@@ -11,6 +11,7 @@ final class StickyWindowModel {
 
     @ObservationIgnored private let metadataStore: MetadataStore
     @ObservationIgnored private var persistTask: Task<Void, Never>?
+    @ObservationIgnored private var backgroundPanel: NSOpenPanel?
     @ObservationIgnored var onPresentationChange: ((StickyRecord) -> Void)?
     @ObservationIgnored var onClose: (() -> Void)?
 
@@ -47,22 +48,37 @@ final class StickyWindowModel {
     }
 
     func importBackground() {
+        if let backgroundPanel {
+            backgroundPanel.makeKeyAndOrderFront(nil)
+            return
+        }
         let panel = NSOpenPanel()
         panel.allowedContentTypes = [.image]
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
-        guard panel.runModal() == .OK, let url = panel.url else { return }
-        Task { @MainActor [weak self] in
+        backgroundPanel = panel
+
+        let completion: (NSApplication.ModalResponse) -> Void = { [weak self, weak panel] response in
             guard let self else { return }
-            do {
-                let path = try await metadataStore.importBackground(from: url)
-                var appearance = record.appearance
-                appearance.background.kind = .image
-                appearance.background.imagePath = path
-                setAppearance(appearance)
-            } catch {
-                NSSound.beep()
+            backgroundPanel = nil
+            guard response == .OK, let url = panel?.url else { return }
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                do {
+                    let path = try await metadataStore.importBackground(from: url)
+                    var appearance = record.appearance
+                    appearance.background.kind = .image
+                    appearance.background.imagePath = path
+                    setAppearance(appearance)
+                } catch {
+                    NSSound.beep()
+                }
             }
+        }
+        if let hostWindow = NSApp.keyWindow {
+            panel.beginSheetModal(for: hostWindow, completionHandler: completion)
+        } else {
+            panel.begin(completionHandler: completion)
         }
     }
 

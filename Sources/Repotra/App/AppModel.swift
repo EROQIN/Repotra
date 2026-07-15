@@ -21,6 +21,7 @@ final class AppModel {
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
     @ObservationIgnored private var searchTask: Task<Void, Never>?
     @ObservationIgnored private var hasStarted = false
+    @ObservationIgnored private var libraryPanel: NSOpenPanel?
     @ObservationIgnored let stickyWindows = StickyWindowCoordinator()
 
     var selectedSession: NoteSession? {
@@ -48,6 +49,10 @@ final class AppModel {
     }
 
     func chooseLibrary() {
+        if let libraryPanel {
+            libraryPanel.makeKeyAndOrderFront(nil)
+            return
+        }
         let panel = NSOpenPanel()
         panel.title = "选择 Repotra 资料库"
         panel.message = "选择或新建一个文件夹来保存 Markdown 笔记。"
@@ -56,8 +61,20 @@ final class AppModel {
         panel.canChooseDirectories = true
         panel.canCreateDirectories = true
         panel.allowsMultipleSelection = false
-        guard panel.runModal() == .OK, let url = panel.url else { return }
-        Task { await openLibrary(url) }
+        panel.directoryURL = libraryURL
+        libraryPanel = panel
+
+        let completion: (NSApplication.ModalResponse) -> Void = { [weak self, weak panel] response in
+            guard let self else { return }
+            libraryPanel = nil
+            guard response == .OK, let url = panel?.url else { return }
+            Task { await self.openLibrary(url) }
+        }
+        if let hostWindow = NSApp.keyWindow {
+            panel.beginSheetModal(for: hostWindow, completionHandler: completion)
+        } else {
+            panel.begin(completionHandler: completion)
+        }
     }
 
     func openLibrary(_ url: URL) async {
