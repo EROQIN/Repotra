@@ -3,6 +3,7 @@ import Foundation
 actor MetadataStore {
     let rootURL: URL
     private let fileManager: FileManager
+    private var libraryConfig = LibraryConfiguration.fresh()
     private var stickyFile = StickyConfigurationFile.empty
 
     private var metadataURL: URL {
@@ -39,6 +40,7 @@ actor MetadataStore {
             config = .fresh()
             try write(config, to: libraryConfigURL)
         }
+        libraryConfig = config
 
         if let data = try? Data(contentsOf: stickiesURL),
            let decoded = try? JSONDecoder().decode(StickyConfigurationFile.self, from: data),
@@ -50,6 +52,15 @@ actor MetadataStore {
             try write(stickyFile, to: stickiesURL)
         }
         return config
+    }
+
+    func quickNotePath() -> String? {
+        libraryConfig.quickNotePath
+    }
+
+    func setQuickNotePath(_ path: String?) throws {
+        libraryConfig.quickNotePath = path
+        try write(libraryConfig, to: libraryConfigURL)
     }
 
     func records() -> [String: StickyRecord] {
@@ -88,6 +99,9 @@ actor MetadataStore {
         if !updates.isEmpty {
             try write(stickyFile, to: stickiesURL)
         }
+        if libraryConfig.quickNotePath == oldPath {
+            try setQuickNotePath(newPath)
+        }
     }
 
     func removeRecords(under path: String) throws {
@@ -95,6 +109,9 @@ actor MetadataStore {
             key != path && !key.hasPrefix(path + "/")
         }
         try write(stickyFile, to: stickiesURL)
+        if libraryConfig.quickNotePath == path || libraryConfig.quickNotePath?.hasPrefix(path + "/") == true {
+            try setQuickNotePath(nil)
+        }
     }
 
     func importBackground(from sourceURL: URL) throws -> String {

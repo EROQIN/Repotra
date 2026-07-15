@@ -53,8 +53,25 @@ struct LibrarySidebar: View {
                     .buttonStyle(.plain)
                 }
             }
+
+            Divider().opacity(0.45)
+            HStack(spacing: 14) {
+                Button { Task { await model.createNote() } } label: {
+                    Label("新建笔记", systemImage: "square.and.pencil")
+                }
+                Button { Task { await model.createFolder() } } label: {
+                    Image(systemName: "folder.badge.plus")
+                }
+                .help("新建文件夹")
+                Spacer()
+            }
+            .buttonStyle(.plain)
+            .font(.callout)
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 14)
+            .frame(height: 42)
         }
-        .navigationTitle(model.libraryURL?.lastPathComponent ?? "资料库")
+        .background(.bar)
         .sheet(item: $renameTarget) { node in
             VStack(alignment: .leading, spacing: 16) {
                 Text("重命名").font(.headline)

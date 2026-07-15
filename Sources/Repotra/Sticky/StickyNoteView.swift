@@ -14,6 +14,7 @@ struct StickyNoteView: View {
             MarkdownEditorView(
                 session: model.session,
                 rootURL: model.rootURL,
+                context: .sticky,
                 renderOptions: MarkdownRenderOptions(
                     fontFamily: model.record.appearance.fontFamily,
                     fontSize: model.record.appearance.fontSize,

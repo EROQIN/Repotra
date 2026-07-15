@@ -55,9 +55,10 @@ struct StickyRecord: Codable, Hashable, Sendable {
 struct LibraryConfiguration: Codable, Sendable {
     var schemaVersion: Int
     var libraryID: UUID
+    var quickNotePath: String?
 
     static func fresh() -> LibraryConfiguration {
-        LibraryConfiguration(schemaVersion: 1, libraryID: UUID())
+        LibraryConfiguration(schemaVersion: 1, libraryID: UUID(), quickNotePath: nil)
     }
 }
 

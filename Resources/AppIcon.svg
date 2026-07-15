@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title description">
+  <title id="title">Repotra app icon</title>
+  <desc id="description">A folded blue and violet note with writing lines and a cursor on a graphite rounded square.</desc>
+  <defs>
+    <linearGradient id="background" x1="128" y1="80" x2="896" y2="944" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#252D3B"/>
+      <stop offset="0.52" stop-color="#121722"/>
+      <stop offset="1" stop-color="#080B12"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="310" y1="245" x2="735" y2="790" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#33D5EC"/>
+      <stop offset="0.48" stop-color="#347CEB"/>
+      <stop offset="1" stop-color="#8751F3"/>
+    </linearGradient>
+    <linearGradient id="fold" x1="630" y1="238" x2="742" y2="374" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#67ECF2"/>
+      <stop offset="1" stop-color="#28AEEB"/>
+    </linearGradient>
+    <linearGradient id="backNote" x1="300" y1="330" x2="666" y2="822" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2952B8"/>
+      <stop offset="1" stop-color="#5630A9"/>
+    </linearGradient>
+    <filter id="sheetShadow" x="-25%" y="-25%" width="150%" height="170%">
+      <feDropShadow dx="0" dy="34" stdDeviation="30" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="accentGlow" x="-50%" y="-80%" width="200%" height="260%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+  </defs>
+
+  <rect x="24" y="24" width="976" height="976" rx="224" fill="url(#background)"/>
+  <rect x="25.5" y="25.5" width="973" height="973" rx="222.5" fill="none" stroke="#8EA0B8" stroke-opacity="0.28" stroke-width="3"/>
+
+  <g filter="url(#sheetShadow)">
+    <path d="M300 329c0-31 25-56 56-56h294l105 105v356c0 37-30 67-67 67H356c-31 0-56-25-56-56V329Z" fill="url(#backNote)" opacity="0.74" transform="translate(0 32) rotate(-2 527 553)"/>
+    <path d="M268 302c0-37 30-67 67-67h292l129 129v359c0 37-30 67-67 67H335c-37 0-67-30-67-67V302Z" fill="url(#paper)"/>
+    <path d="M627 235 756 364h-74c-30 0-55-25-55-55v-74Z" fill="url(#fold)"/>
+    <path d="M627 235v75c0 30 24 54 54 54h75" fill="none" stroke="#0D4A91" stroke-opacity="0.22" stroke-width="4"/>
+    <path d="M301 706c104 31 262 34 455-16v33c0 37-30 67-67 67H335c-37 0-67-30-67-67v-27c11 4 22 7 33 10Z" fill="#7148E7" opacity="0.2"/>
+  </g>
+
+  <g fill="#FFF8EA" opacity="0.22" filter="url(#accentGlow)">
+    <rect x="368" y="480" width="196" height="31" rx="15.5"/>
+    <rect x="368" y="558" width="264" height="31" rx="15.5"/>
+    <rect x="652" y="480" width="29" height="109" rx="14.5"/>
+  </g>
+  <g fill="#FFF9ED">
+    <rect x="368" y="480" width="196" height="31" rx="15.5"/>
+    <rect x="368" y="558" width="264" height="31" rx="15.5"/>
+    <rect x="652" y="480" width="29" height="109" rx="14.5"/>
+  </g>
+</svg>

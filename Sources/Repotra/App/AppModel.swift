@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import Observation
 
@@ -8,6 +9,7 @@ final class AppModel {
     private(set) var tree: [NoteNode] = []
     private(set) var sessions: [String: NoteSession] = [:]
     var selectedPath: String?
+    var titleEditRequestPath: String?
     var searchQuery = ""
     private(set) var searchResults: [SearchResult] = []
     private(set) var isLoading = false
@@ -23,6 +25,8 @@ final class AppModel {
     @ObservationIgnored private var hasStarted = false
     @ObservationIgnored private var hasPresentedInitialLibraryPicker = false
     @ObservationIgnored let stickyWindows = StickyWindowCoordinator()
+    @ObservationIgnored let quickCapture = QuickCaptureCoordinator()
+    @ObservationIgnored private var opensQuickCaptureAfterLibrarySelection = false
 
     var selectedSession: NoteSession? {
         guard let selectedPath else { return nil }
@@ -52,6 +56,7 @@ final class AppModel {
         isLoading = true
         defer { isLoading = false }
         await saveAllSessions()
+        quickCapture.closeForLibrarySwitch()
         stickyWindows.closeWindowsForLibrarySwitch()
         watcher.stop()
         sessions.removeAll()
@@ -73,6 +78,10 @@ final class AppModel {
             UserDefaults.standard.set(url.path, forKey: "Repotra.LastLibraryPath")
             startWatching(url: url)
             await restoreStickyWindows()
+            if opensQuickCaptureAfterLibrarySelection {
+                opensQuickCaptureAfterLibrarySelection = false
+                await showQuickCapture()
+            }
         } catch {
             errorMessage = error.localizedDescription
             libraryURL = nil
@@ -86,6 +95,17 @@ final class AppModel {
 
     func dismissLibraryPicker() {
         isLibraryPickerPresented = false
+        opensQuickCaptureAfterLibrarySelection = false
+    }
+
+    func requestQuickCapture() {
+        if libraryURL == nil {
+            opensQuickCaptureAfterLibrarySelection = true
+            presentLibraryPicker()
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+        Task { await showQuickCapture() }
     }
 
     func selectLibrary(_ url: URL) async {
@@ -137,6 +157,7 @@ final class AppModel {
             let path = try await store.createNote(in: parent, title: "Untitled")
             await reloadLibraryIndex()
             await select(path: path)
+            titleEditRequestPath = path
         } catch { errorMessage = error.localizedDescription }
     }
 
@@ -148,15 +169,20 @@ final class AppModel {
         } catch { errorMessage = error.localizedDescription }
     }
 
-    func rename(path: String, to newName: String) async {
-        guard let store, let metadataStore else { return }
+    @discardableResult
+    func rename(path: String, to newName: String) async -> Bool {
+        guard let store, let metadataStore else { return false }
+        if let validationError = filenameValidationError(newName) {
+            errorMessage = validationError
+            return false
+        }
         let affectedSessions = sessions.filter { key, _ in key == path || key.hasPrefix(path + "/") }.map(\.value)
         for session in affectedSessions {
             await session.saveNow()
         }
         guard affectedSessions.allSatisfy({ $0.conflict == nil }) else {
             errorMessage = "请先处理外部文件冲突，再重命名。"
-            return
+            return false
         }
         do {
             let newPath = try await store.renameItem(at: path, to: newName)
@@ -166,7 +192,27 @@ final class AppModel {
                 selectedPath = newPath + String((selectedPath ?? path).dropFirst(path.count))
             }
             await reloadLibraryIndex()
-        } catch { errorMessage = error.localizedDescription }
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    func filenameValidationError(_ value: String) -> String? {
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return "文件名不能为空。" }
+        guard trimmed.lowercased() != ".repotra" else { return ".repotra 是保留名称。" }
+        let invalid = CharacterSet(charactersIn: "/:\0").union(.newlines)
+        guard trimmed.rangeOfCharacter(from: invalid) == nil else {
+            return "文件名不能包含 /、: 或换行。"
+        }
+        return nil
+    }
+
+    func revealSelectedNote() {
+        guard let libraryURL, let selectedPath else { return }
+        NSWorkspace.shared.activateFileViewerSelecting([libraryURL.appending(path: selectedPath)])
     }
 
     func move(path: String, into directory: String) async {
@@ -266,6 +312,37 @@ final class AppModel {
     func prepareForTermination() async {
         stickyWindows.prepareForTermination()
         await saveAllSessions()
+    }
+
+    private func showQuickCapture() async {
+        guard let session = await quickNoteSession(), let libraryURL else { return }
+        quickCapture.show(
+            session: session,
+            rootURL: libraryURL,
+            importImageFile: { [weak self] url in await self?.importImage(from: url) },
+            importImageData: { [weak self] data in await self?.importImage(data: data) }
+        )
+    }
+
+    private func quickNoteSession() async -> NoteSession? {
+        guard let store, let metadataStore else { return nil }
+        do {
+            let path: String
+            if let configured = await metadataStore.quickNotePath(), await store.noteExists(at: configured) {
+                path = configured
+            } else if await store.noteExists(at: "快速笔记.md") {
+                path = "快速笔记.md"
+                try await metadataStore.setQuickNotePath(path)
+            } else {
+                path = try await store.createNote(in: nil, title: "快速笔记")
+                try await metadataStore.setQuickNotePath(path)
+                await reloadLibraryIndex()
+            }
+            return await session(for: path)
+        } catch {
+            errorMessage = error.localizedDescription
+            return nil
+        }
     }
 
     private func pin(session: NoteSession, existingRecord: StickyRecord? = nil) async {

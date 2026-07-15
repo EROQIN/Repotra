@@ -4,6 +4,7 @@ import Observation
 @MainActor
 @Observable
 final class NoteSession {
+    let editorDocumentID = UUID()
     private(set) var relativePath: String
     var content: String
     private(set) var fingerprint: String

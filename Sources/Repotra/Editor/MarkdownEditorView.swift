@@ -1,360 +1,351 @@
 import AppKit
+import MarkdownEngine
+import MarkdownEngineCodeBlocks
+import Observation
 import SwiftUI
 import UniformTypeIdentifiers
 
-struct MarkdownEditorView: NSViewRepresentable {
-    @Bindable var session: NoteSession
-    let rootURL: URL?
-    var renderOptions: MarkdownRenderOptions = .standard
-    var importImageFile: @MainActor (URL) async -> String?
-    var importImageData: @MainActor (Data) async -> String?
+enum MarkdownEditorContext: Sendable {
+    case main
+    case sticky
+    case quickCapture
+}
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(
-            session: session,
-            rootURL: rootURL,
-            renderOptions: renderOptions,
-            importImageFile: importImageFile,
-            importImageData: importImageData
+enum MarkdownEditorCommand: Sendable {
+    case bold
+    case italic
+    case strikethrough
+    case highlight
+    case inlineCode
+    case link
+    case heading(Int)
+    case blockquote
+    case unorderedList
+    case orderedList
+    case codeBlock
+    case horizontalRule
+    case image
+}
+
+@MainActor
+@Observable
+final class MarkdownCommandCenter {
+    let id: UUID
+    let bus: MarkdownEditorBus
+
+    init() {
+        let identifier = UUID()
+        id = identifier
+        func name(_ action: String) -> Notification.Name {
+            Notification.Name("Repotra.Markdown.\(identifier.uuidString).\(action)")
+        }
+
+        bus = MarkdownEditorBus(
+            applyBoldRequest: name("bold"),
+            applyItalicRequest: name("italic"),
+            applyHeadingRequest: name("heading"),
+            applyHighlightRequest: name("highlight"),
+            applyStrikethroughRequest: name("strikethrough"),
+            applyInlineCodeRequest: name("inline-code"),
+            applyBlockquoteRequest: name("blockquote"),
+            applyUnorderedListRequest: name("unordered-list"),
+            applyOrderedListRequest: name("ordered-list"),
+            applyLinkRequest: name("link"),
+            applyCodeBlockRequest: name("code-block"),
+            applyHorizontalRuleRequest: name("horizontal-rule"),
+            applyImageRequest: name("image"),
+            insertMarkdownRequest: name("insert-markdown")
         )
     }
 
-    func makeNSView(context: Context) -> NSScrollView {
-        let scrollView = NSScrollView()
-        scrollView.hasVerticalScroller = true
-        scrollView.autohidesScrollers = true
-        scrollView.drawsBackground = false
-        scrollView.borderType = .noBorder
-
-        let textView = FusionTextView(frame: .zero)
-        textView.delegate = context.coordinator
-        textView.isRichText = false
-        textView.isEditable = true
-        textView.isSelectable = true
-        textView.allowsUndo = true
-        textView.drawsBackground = false
-        textView.textContainerInset = NSSize(width: 28, height: 30)
-        textView.isVerticallyResizable = true
-        textView.isHorizontallyResizable = false
-        textView.autoresizingMask = [.width]
-        textView.textContainer?.widthTracksTextView = true
-        textView.textContainer?.containerSize = NSSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
-        textView.insertionPointColor = renderOptions.textColor
-        textView.linkTextAttributes = [
-            .foregroundColor: NSColor.linkColor,
-            .underlineStyle: NSUnderlineStyle.single.rawValue,
-        ]
-        textView.onDisplayLocation = { [weak coordinator = context.coordinator] location, taskToggle in
-            coordinator?.activate(atDisplayLocation: location, toggleTask: taskToggle) ?? false
-        }
-        textView.ensureActiveSelection = { [weak coordinator = context.coordinator] in
-            coordinator?.ensureSelectionIsActive() ?? true
-        }
-        textView.onImportImageFile = { [weak coordinator = context.coordinator] url in
-            coordinator?.insertImage(from: url)
-        }
-        textView.onImportImageData = { [weak coordinator = context.coordinator] data in
-            coordinator?.insertImage(data: data)
-        }
-        scrollView.documentView = textView
-        context.coordinator.textView = textView
-        context.coordinator.rebuild(source: session.content, selectionSourceLocation: 0)
-        return scrollView
+    func insert(_ markdown: String) {
+        NotificationCenter.default.post(
+            name: bus.insertMarkdownRequest!, object: nil, userInfo: ["text": markdown]
+        )
     }
 
-    func updateNSView(_ scrollView: NSScrollView, context: Context) {
-        context.coordinator.session = session
-        context.coordinator.rootURL = rootURL
-        context.coordinator.renderOptions = renderOptions
-        guard let textView = scrollView.documentView as? FusionTextView else { return }
-        textView.insertionPointColor = renderOptions.textColor
-        if context.coordinator.source != session.content || context.coordinator.lastOptions != renderOptions {
-            let location = context.coordinator.currentSourceSelectionLocation()
-            context.coordinator.rebuild(source: session.content, selectionSourceLocation: location)
+    func perform(_ command: MarkdownEditorCommand) {
+        let center = NotificationCenter.default
+        switch command {
+        case .bold: center.post(name: bus.applyBoldRequest!, object: nil)
+        case .italic: center.post(name: bus.applyItalicRequest!, object: nil)
+        case .strikethrough: center.post(name: bus.applyStrikethroughRequest!, object: nil)
+        case .highlight: center.post(name: bus.applyHighlightRequest!, object: nil)
+        case .inlineCode: center.post(name: bus.applyInlineCodeRequest!, object: nil)
+        case .link: center.post(name: bus.applyLinkRequest!, object: nil)
+        case let .heading(level):
+            center.post(name: bus.applyHeadingRequest!, object: nil, userInfo: ["level": level])
+        case .blockquote: center.post(name: bus.applyBlockquoteRequest!, object: nil)
+        case .unorderedList: center.post(name: bus.applyUnorderedListRequest!, object: nil)
+        case .orderedList: center.post(name: bus.applyOrderedListRequest!, object: nil)
+        case .codeBlock: center.post(name: bus.applyCodeBlockRequest!, object: nil)
+        case .horizontalRule: center.post(name: bus.applyHorizontalRuleRequest!, object: nil)
+        case .image: center.post(name: bus.applyImageRequest!, object: nil)
         }
     }
+}
 
-    @MainActor
-    final class Coordinator: NSObject, NSTextViewDelegate {
-        var session: NoteSession
-        var rootURL: URL?
-        var renderOptions: MarkdownRenderOptions
-        var lastOptions = MarkdownRenderOptions.standard
-        weak var textView: FusionTextView?
-        private let engine = MarkdownRenderEngine()
-        private var rendered: RenderedDocument?
-        private var isApplying = false
-        private let importImageFile: @MainActor (URL) async -> String?
-        private let importImageData: @MainActor (Data) async -> String?
-        private var reflowTask: Task<Void, Never>?
-        var source = ""
+struct MarkdownEditorView: View {
+    private static let codeHighlighter = HighlighterSwiftBridge()
 
-        init(
-            session: NoteSession,
-            rootURL: URL?,
-            renderOptions: MarkdownRenderOptions,
-            importImageFile: @escaping @MainActor (URL) async -> String?,
-            importImageData: @escaping @MainActor (Data) async -> String?
-        ) {
-            self.session = session
-            self.rootURL = rootURL
-            self.renderOptions = renderOptions
-            self.importImageFile = importImageFile
-            self.importImageData = importImageData
-        }
+    @Bindable var session: NoteSession
+    let rootURL: URL
+    var context: MarkdownEditorContext = .main
+    var startsAtDocumentEnd = false
+    var renderOptions = MarkdownRenderOptions()
+    let importImageFile: @MainActor (URL) async -> String?
+    let importImageData: @MainActor (Data) async -> String?
 
-        func rebuild(source: String, selectionSourceLocation: Int) {
-            guard let textView else { return }
-            reflowTask?.cancel()
-            self.source = source
-            lastOptions = renderOptions
-            let next = engine.render(
-                source: source,
-                activeLocation: max(0, min((source as NSString).length, selectionSourceLocation)),
-                rootURL: rootURL,
-                options: renderOptions
-            )
-            rendered = next
-            isApplying = true
-            textView.textStorage?.setAttributedString(next.attributedString)
-            let active = next.segments.first(where: \.isActive)
-            let displaySelection: Int
-            if let active {
-                let relative = max(0, min(active.sourceRange.length, selectionSourceLocation - active.sourceRange.location))
-                displaySelection = active.displayRange.location + min(relative, active.displayRange.length)
-            } else {
-                displaySelection = 0
-            }
-            textView.setSelectedRange(NSRange(location: min(displaySelection, textView.string.utf16.count), length: 0))
-            isApplying = false
-        }
+    @State private var commandCenter = MarkdownCommandCenter()
+    @State private var rawSourceMode = false
+    @State private var hasTextSelection = false
+    @State private var showsBlockMenu = false
+    @State private var visibleCodeBlocks: [CodeBlockSelection] = []
+    @State private var copiedCodeBlockID: Int?
 
-        func textDidChange(_: Notification) {
-            guard !isApplying, let textView, let rendered,
-                  let active = rendered.segments.first(where: \.isActive) else { return }
-            let displayText = textView.string as NSString
-            let outsideLength = rendered.displayLength - active.displayRange.length
-            let activeLength = max(0, displayText.length - outsideLength)
-            let activeDisplayRange = NSRange(location: active.displayRange.location, length: activeLength)
-            guard NSMaxRange(activeDisplayRange) <= displayText.length else { return }
-            let replacement = displayText.substring(with: activeDisplayRange)
-            let sourceText = source as NSString
-            guard NSMaxRange(active.sourceRange) <= sourceText.length else { return }
-            let nextSource = sourceText.replacingCharacters(in: active.sourceRange, with: replacement)
-            let sourceDelta = (replacement as NSString).length - active.sourceRange.length
-            let displayDelta = activeLength - active.displayRange.length
-            let updatedSegments = rendered.segments.map { segment in
-                if segment.isActive {
-                    return RenderedSegment(
-                        sourceRange: NSRange(location: segment.sourceRange.location, length: (replacement as NSString).length),
-                        displayRange: NSRange(location: segment.displayRange.location, length: activeLength),
-                        isActive: true,
-                        rawSource: replacement
-                    )
+    var body: some View {
+        ZStack(alignment: .top) {
+            NativeTextViewWrapper(
+                text: Binding(
+                    get: { session.content },
+                    set: { session.updateContent($0) }
+                ),
+                configuration: configuration,
+                fontName: renderOptions.fontFamily,
+                fontSize: renderOptions.fontSize,
+                documentId: session.editorDocumentID.uuidString,
+                startsAtDocumentEnd: startsAtDocumentEnd,
+                onPasteImage: importImage(from:),
+                onSlashCommand: { showsBlockMenu = true },
+                onSelectionChange: { hasTextSelection = $0.length > 0 },
+                onCodeBlockSelectionChange: { selections in
+                    DispatchQueue.main.async { visibleCodeBlocks = selections }
                 }
-                let followsActive = segment.sourceRange.location > active.sourceRange.location
-                return RenderedSegment(
-                    sourceRange: NSRange(
-                        location: segment.sourceRange.location + (followsActive ? sourceDelta : 0),
-                        length: segment.sourceRange.length
-                    ),
-                    displayRange: NSRange(
-                        location: segment.displayRange.location + (followsActive ? displayDelta : 0),
-                        length: segment.displayRange.length
-                    ),
-                    isActive: false,
-                    rawSource: segment.rawSource
-                )
-            }
-            self.rendered = RenderedDocument(
-                attributedString: rendered.attributedString,
-                segments: updatedSegments,
-                activeSourceRange: NSRange(location: active.sourceRange.location, length: (replacement as NSString).length)
             )
-            source = nextSource
-            session.updateContent(nextSource)
-            let oldSeparators = active.rawSource.components(separatedBy: "\n\n").count
-            let newSeparators = replacement.components(separatedBy: "\n\n").count
-            if (nextSource as NSString).length < 100_000 || oldSeparators != newSeparators {
-                scheduleReflow()
+
+            ForEach(visibleCodeBlocks) { selection in
+                CodeBlockButton(
+                    selection: selection,
+                    isCopied: copiedCodeBlockID == selection.id
+                ) {
+                    copyCodeBlock(selection)
+                }
+            }
+            if context == .main, hasTextSelection || showsBlockMenu {
+                editorTools
+                    .padding(.top, 12)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+            if context == .main, showsBlockMenu {
+                slashPalette
+                    .padding(.top, 54)
+                    .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
             }
         }
+        .animation(.easeOut(duration: 0.14), value: hasTextSelection)
+        .focusedSceneValue(\.markdownCommandCenter, commandCenter)
+    }
 
-        func activate(atDisplayLocation location: Int, toggleTask: Bool) -> Bool {
-            guard let rendered, let segment = rendered.segment(atDisplayLocation: location), !segment.isActive else {
-                return false
+    private var configuration: MarkdownEditorConfiguration {
+        var value = MarkdownEditorConfiguration.default
+        var theme = MarkdownEditorTheme.default
+        theme.bodyText = renderOptions.textColor
+        theme.mutedText = renderOptions.textColor.withAlphaComponent(0.48)
+        theme.disabledText = renderOptions.textColor.withAlphaComponent(0.28)
+        theme.headingMarker = renderOptions.textColor.withAlphaComponent(0.35)
+        theme.link = NSColor.systemBlue
+        theme.highlightColor = NSColor.systemYellow.withAlphaComponent(0.28)
+        value.theme = theme
+        value.services = MarkdownEditorServices(
+            images: LibraryAssetProvider(rootURL: rootURL),
+            syntaxHighlighter: Self.codeHighlighter,
+            bus: commandCenter.bus
+        )
+        value.readingWidth = context == .main ? 720 : nil
+        value.rawSourceMode = rawSourceMode
+        value.textInsets = TextInsets(
+            horizontal: context == .main ? 40 : 18,
+            vertical: context == .main ? 46 : 24
+        )
+        value.overscroll = context == .sticky
+            ? OverscrollPolicy(percent: 0, maxPoints: 0, minPoints: 0)
+            : .default
+        value.scrollers = .vertical
+        return value
+    }
+
+    private var editorTools: some View {
+        HStack(spacing: 2) {
+            toolButton("bold", help: "粗体 ⌘B", command: .bold)
+            toolButton("italic", help: "斜体 ⌘I", command: .italic)
+            toolButton("strikethrough", help: "删除线 ⇧⌘X", command: .strikethrough)
+            toolButton("chevron.left.forwardslash.chevron.right", help: "行内代码 ⇧⌘C", command: .inlineCode)
+            toolButton("highlighter", help: "高亮 ⇧⌘H", command: .highlight)
+            toolButton("link", help: "链接 ⌘K", command: .link)
+            Divider().frame(height: 18).padding(.horizontal, 4)
+            Menu {
+                Button("正文") { commandCenter.perform(.heading(0)) }
+                ForEach(1 ... 6, id: \.self) { level in
+                    Button("标题 \(level)") { commandCenter.perform(.heading(level)) }
+                }
+                Divider()
+                Button("引用") { commandCenter.perform(.blockquote) }
+                Button("无序列表") { commandCenter.perform(.unorderedList) }
+                Button("有序列表") { commandCenter.perform(.orderedList) }
+                Button("代码块") { commandCenter.perform(.codeBlock) }
+                Button("分隔线") { commandCenter.perform(.horizontalRule) }
+                Button("图片") { commandCenter.perform(.image) }
+            } label: {
+                Image(systemName: "plus")
+                    .frame(width: 28, height: 26)
             }
-            if toggleTask, toggleTaskMarker(in: segment) {
-                return true
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .help("插入块 / Markdown 命令")
+
+            Button {
+                rawSourceMode.toggle()
+            } label: {
+                Image(systemName: rawSourceMode ? "doc.richtext.fill" : "chevron.left.forwardslash.chevron.right")
+                    .frame(width: 28, height: 26)
             }
-            let sourceLocation = engine.sourceLocation(for: location, segment: segment)
-            rebuild(source: source, selectionSourceLocation: sourceLocation)
-            return true
+            .buttonStyle(.plain)
+            .help(rawSourceMode ? "返回融合视图" : "显示 Markdown 源码")
         }
+        .padding(5)
+        .background(.ultraThinMaterial, in: Capsule())
+        .overlay(Capsule().stroke(.separator.opacity(0.35), lineWidth: 0.5))
+        .shadow(color: .black.opacity(0.12), radius: 12, y: 5)
+    }
 
-        func ensureSelectionIsActive() -> Bool {
-            guard let textView, let rendered,
-                  let segment = rendered.segment(atDisplayLocation: textView.selectedRange().location),
-                  !segment.isActive else { return true }
-            let location = engine.sourceLocation(for: textView.selectedRange().location, segment: segment)
-            rebuild(source: source, selectionSourceLocation: location)
-            return true
+    private var slashPalette: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("插入 Markdown")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+            slashButton("正文", icon: "textformat", command: .heading(0))
+            slashButton("一级标题", icon: "textformat.size.larger", command: .heading(1))
+            slashButton("引用", icon: "text.quote", command: .blockquote)
+            slashButton("无序列表", icon: "list.bullet", command: .unorderedList)
+            slashButton("有序列表", icon: "list.number", command: .orderedList)
+            slashInsert("任务列表", icon: "checklist", markdown: "- [ ] ")
+            slashButton("代码块", icon: "chevron.left.forwardslash.chevron.right", command: .codeBlock)
+            slashInsert("表格 3×3", icon: "tablecells", markdown: "| A | B | C |\n|---|---|---|\n|   |   |   |\n|   |   |   |\n")
+            slashInsert("脚注", icon: "textformat.superscript", markdown: "[^1]\n\n[^1]: ")
+            slashInsert("目录", icon: "list.bullet.indent", markdown: "[TOC]\n")
+            slashInsert("YAML Front Matter", icon: "slider.horizontal.3", markdown: "---\ntitle: \n---\n")
         }
+        .padding(6)
+        .frame(width: 230)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 11))
+        .overlay(RoundedRectangle(cornerRadius: 11).stroke(.separator.opacity(0.45), lineWidth: 0.5))
+        .shadow(color: .black.opacity(0.18), radius: 18, y: 8)
+    }
 
-        func currentSourceSelectionLocation() -> Int {
-            guard let textView, let rendered,
-                  let segment = rendered.segment(atDisplayLocation: textView.selectedRange().location) else { return 0 }
-            if segment.isActive {
-                return segment.sourceRange.location + max(0, textView.selectedRange().location - segment.displayRange.location)
+    private func slashButton(_ title: String, icon: String, command: MarkdownEditorCommand) -> some View {
+        Button {
+            showsBlockMenu = false
+            commandCenter.perform(command)
+        } label: {
+            Label(title, systemImage: icon).frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 5)
+    }
+
+    private func slashInsert(_ title: String, icon: String, markdown: String) -> some View {
+        Button {
+            showsBlockMenu = false
+            commandCenter.insert(markdown)
+        } label: {
+            Label(title, systemImage: icon).frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 5)
+    }
+
+    private func toolButton(_ systemName: String, help: String, command: MarkdownEditorCommand) -> some View {
+        Button { commandCenter.perform(command) } label: {
+            Image(systemName: systemName).frame(width: 28, height: 26)
+        }
+        .buttonStyle(.plain)
+        .help(help)
+    }
+
+    private func importImage(from pasteboard: NSPasteboard) -> String? {
+        let assetsURL = rootURL.appending(path: "assets", directoryHint: .isDirectory)
+        do {
+            try FileManager.default.createDirectory(at: assetsURL, withIntermediateDirectories: true)
+            if let source = PasteboardImageReader.imageFileURL(from: pasteboard) {
+                let ext = source.pathExtension.isEmpty ? "png" : source.pathExtension.lowercased()
+                let name = "\(UUID().uuidString.lowercased()).\(ext)"
+                try FileManager.default.copyItem(at: source, to: assetsURL.appending(path: name))
+                return "![image](assets/\(name))"
             }
-            return engine.sourceLocation(for: textView.selectedRange().location, segment: segment)
-        }
-
-        func insertImage(from url: URL) {
-            Task { @MainActor [weak self] in
-                guard let self, let path = await importImageFile(url) else { return }
-                textView?.insertText("![\(url.deletingPathExtension().lastPathComponent)](\(path))", replacementRange: textView?.selectedRange() ?? .init())
+            if let data = PasteboardImageReader.imageData(from: pasteboard) {
+                let name = "\(UUID().uuidString.lowercased()).png"
+                try data.write(to: assetsURL.appending(path: name), options: [.atomic])
+                return "![image](assets/\(name))"
             }
+        } catch {
+            session.lastError = "图片导入失败：\(error.localizedDescription)"
         }
+        return nil
+    }
 
-        func insertImage(data: Data) {
-            Task { @MainActor [weak self] in
-                guard let self, let path = await importImageData(data) else { return }
-                textView?.insertText("![Image](\(path))", replacementRange: textView?.selectedRange() ?? .init())
-            }
-        }
-
-        private func toggleTaskMarker(in segment: RenderedSegment) -> Bool {
-            let raw = segment.rawSource
-            let replacement: String
-            if let range = raw.range(of: "[ ]") {
-                replacement = raw.replacingCharacters(in: range, with: "[x]")
-            } else if let range = raw.range(of: "[x]", options: .caseInsensitive) {
-                replacement = raw.replacingCharacters(in: range, with: "[ ]")
-            } else {
-                return false
-            }
-            let next = (source as NSString).replacingCharacters(in: segment.sourceRange, with: replacement)
-            session.updateContent(next)
-            rebuild(source: next, selectionSourceLocation: segment.sourceRange.location)
-            return true
-        }
-
-        private func scheduleReflow() {
-            reflowTask?.cancel()
-            reflowTask = Task { @MainActor [weak self] in
-                try? await Task.sleep(for: .milliseconds(140))
-                guard let self, !Task.isCancelled else { return }
-                rebuild(source: source, selectionSourceLocation: currentSourceSelectionLocation())
+    private func copyCodeBlock(_ selection: CodeBlockSelection) {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(selection.code, forType: .string)
+        copiedCodeBlockID = selection.id
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(1.1))
+            if copiedCodeBlockID == selection.id {
+                copiedCodeBlockID = nil
             }
         }
     }
 }
 
-@MainActor
-final class FusionTextView: NSTextView {
-    var onDisplayLocation: ((Int, Bool) -> Bool)?
-    var ensureActiveSelection: (() -> Bool)?
-    var onImportImageFile: ((URL) -> Void)?
-    var onImportImageData: ((Data) -> Void)?
+struct MarkdownRenderOptions {
+    var fontFamily = "SF Pro"
+    var fontSize: CGFloat = 16
+    var textColor: NSColor = .labelColor
+}
 
-    override func mouseDown(with event: NSEvent) {
-        let point = convert(event.locationInWindow, from: nil)
-        let index = characterIndexForInsertion(at: point)
-        let shouldToggleTask = point.x < textContainerInset.width + 42
-        if onDisplayLocation?(index, shouldToggleTask) == true {
-            return
+private struct LibraryAssetProvider: EmbeddedImageProvider, @unchecked Sendable {
+    let rootURL: URL
+    private let cache = NSCache<NSString, NSImage>()
+
+    func image(for reference: EmbeddedImageRequest) -> NSImage? {
+        let decoded = reference.name.removingPercentEncoding ?? reference.name
+        guard !decoded.contains(".."), !decoded.hasPrefix("/") else { return nil }
+        let key = decoded as NSString
+        if let cached = cache.object(forKey: key) { return cached }
+        let url = rootURL.appending(path: decoded).standardizedFileURL
+        guard url.path.hasPrefix(rootURL.standardizedFileURL.path), let image = NSImage(contentsOf: url) else {
+            return nil
         }
-        super.mouseDown(with: event)
+        cache.setObject(image, forKey: key)
+        return image
     }
 
-    override func keyDown(with event: NSEvent) {
-        _ = ensureActiveSelection?()
-        super.keyDown(with: event)
+    func fingerprint() -> AnyHashable {
+        rootURL.path
     }
+}
 
-    override func performKeyEquivalent(with event: NSEvent) -> Bool {
-        guard event.modifierFlags.contains(.command),
-              let characters = event.charactersIgnoringModifiers?.lowercased()
-        else {
-            return super.performKeyEquivalent(with: event)
-        }
-        switch characters {
-        case "b": wrapSelection(prefix: "**", suffix: "**"); return true
-        case "i": wrapSelection(prefix: "*", suffix: "*"); return true
-        case "k": wrapSelection(prefix: "[", suffix: "](https://)"); return true
-        default: return super.performKeyEquivalent(with: event)
-        }
-    }
+private struct MarkdownCommandCenterKey: FocusedValueKey {
+    typealias Value = MarkdownCommandCenter
+}
 
-    override func insertNewline(_ sender: Any?) {
-        let text = string as NSString
-        let selection = selectedRange()
-        let lineRange = text.lineRange(for: NSRange(location: selection.location, length: 0))
-        let line = text.substring(with: NSRange(location: lineRange.location, length: selection.location - lineRange.location))
-        let patterns = [
-            #"^(\s*[-+*]\s+\[[ xX]\]\s+)"#,
-            #"^(\s*[-+*]\s+)"#,
-            #"^(\s*)(\d+)\.\s+"#,
-        ]
-        for pattern in patterns {
-            guard let regex = try? NSRegularExpression(pattern: pattern),
-                  let match = regex.firstMatch(in: line, range: NSRange(location: 0, length: (line as NSString).length)) else { continue }
-            var marker = (line as NSString).substring(with: match.range)
-            if pattern.contains("\\d+"), match.numberOfRanges > 2 {
-                let indent = (line as NSString).substring(with: match.range(at: 1))
-                let number = Int((line as NSString).substring(with: match.range(at: 2))) ?? 0
-                marker = "\(indent)\(number + 1). "
-            } else if marker.contains("[x]") || marker.contains("[X]") {
-                marker = marker.replacingOccurrences(of: "[x]", with: "[ ]", options: .caseInsensitive)
-            }
-            let remainder = line.dropFirst(match.range.length).trimmingCharacters(in: .whitespaces)
-            if remainder.isEmpty {
-                replaceCharacters(in: NSRange(location: lineRange.location, length: selection.location - lineRange.location), with: "")
-                super.insertNewline(sender)
-            } else {
-                insertText("\n\(marker)", replacementRange: selection)
-            }
-            return
-        }
-        super.insertNewline(sender)
-    }
-
-    override func paste(_ sender: Any?) {
-        let pasteboard = NSPasteboard.general
-        if let urls = pasteboard.readObjects(forClasses: [NSURL.self], options: [.urlReadingFileURLsOnly: true]) as? [URL],
-           let imageURL = urls.first(where: { UTType(filenameExtension: $0.pathExtension)?.conforms(to: .image) == true })
-        {
-            onImportImageFile?(imageURL)
-            return
-        }
-        if let image = NSImage(pasteboard: pasteboard),
-           let tiff = image.tiffRepresentation,
-           let bitmap = NSBitmapImageRep(data: tiff),
-           let png = bitmap.representation(using: .png, properties: [:])
-        {
-            onImportImageData?(png)
-            return
-        }
-        super.paste(sender)
-    }
-
-    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
-        if let urls = sender.draggingPasteboard.readObjects(
-            forClasses: [NSURL.self],
-            options: [.urlReadingFileURLsOnly: true]
-        ) as? [URL], let imageURL = urls.first(where: { UTType(filenameExtension: $0.pathExtension)?.conforms(to: .image) == true }) {
-            onImportImageFile?(imageURL)
-            return true
-        }
-        return super.performDragOperation(sender)
-    }
-
-    private func wrapSelection(prefix: String, suffix: String) {
-        _ = ensureActiveSelection?()
-        let range = selectedRange()
-        let selected = (string as NSString).substring(with: range)
-        insertText(prefix + selected + suffix, replacementRange: range)
-        setSelectedRange(NSRange(location: range.location + prefix.utf16.count, length: selected.utf16.count))
+extension FocusedValues {
+    var markdownCommandCenter: MarkdownCommandCenter? {
+        get { self[MarkdownCommandCenterKey.self] }
+        set { self[MarkdownCommandCenterKey.self] = newValue }
     }
 }

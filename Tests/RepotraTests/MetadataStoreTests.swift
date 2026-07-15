@@ -11,6 +11,10 @@ struct MetadataStoreTests {
         let store = MetadataStore(rootURL: library.url)
         let configuration = try await store.bootstrap()
         #expect(configuration.schemaVersion == 1)
+        #expect(configuration.quickNotePath == nil)
+
+        try await store.setQuickNotePath("快速笔记.md")
+        #expect(await store.quickNotePath() == "快速笔记.md")
 
         var record = StickyRecord(notePath: "folder/note.md")
         record.alwaysOnTop = true
@@ -26,5 +30,6 @@ struct MetadataStoreTests {
         let reloaded = MetadataStore(rootURL: library.url)
         _ = try await reloaded.bootstrap()
         #expect(await reloaded.record(for: "archive/note.md") != nil)
+        #expect(await reloaded.quickNotePath() == "快速笔记.md")
     }
 }

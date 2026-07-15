@@ -10,15 +10,16 @@
 		12DE25B7E773E93528FEE50B /* StickyNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161CBEF2796E42E4D5972CC3 /* StickyNoteView.swift */; };
 		134631219BD2E8AAD099C0B5 /* RepotraUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ABD7E0EDC4FA7FD64254B3B /* RepotraUITests.swift */; };
 		15521330FC39C484CF8344F3 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F60B5AC22C2B9AEB65D85AE /* AppModel.swift */; };
-		1BFB6DF462C9CF8E7ACB862F /* MarkdownRenderEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7F94363222C9FFB8E27E58 /* MarkdownRenderEngine.swift */; };
 		1F6C160BBB8B191709AAFD14 /* MarkdownEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD89B8894D582A0F3DC532A8 /* MarkdownEditorView.swift */; };
 		246D019CED4620D102188DD5 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAB6FD3B88D910CCE1D21E2 /* PerformanceTests.swift */; };
+		2A4EFF535136FFC3A54F9B44 /* GlobalHotKeyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2CE8DA7199C1BDC3C5577E /* GlobalHotKeyController.swift */; };
 		3142FB03157255405D3B8C69 /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EF9E7D5EAE116F2314CCFC /* SmokeTests.swift */; };
 		3590F25EFFB77092B4F8A56E /* LibraryLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAC5A379EE643AFBCE17CED /* LibraryLocationPicker.swift */; };
 		3D0091C45D5E8E6CF29C71A2 /* NoteSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67CD373BCEA7EB701C2F896 /* NoteSession.swift */; };
 		4894291EAE1CE28E3A4502D9 /* SearchIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCE30BC3AD51D73AB87D5CC4 /* SearchIndex.swift */; };
 		48B07A88D94F3CC91DD3ED0B /* PathUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3D9A299DB44D928639556A /* PathUtilities.swift */; };
 		4DB2749A975B16BD5579BE64 /* RepotraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6A0372661EFC356134D12A /* RepotraApp.swift */; };
+		66D6B75DE2D87ABDF72730D2 /* QuickCaptureCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1A2FDED5DE9386813737D4 /* QuickCaptureCoordinator.swift */; };
 		6B34D99721329C9E091FC163 /* NoteSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BD5BC46485F1AAB63E20335 /* NoteSessionTests.swift */; };
 		6BB4550A6BC70B3FE563F4E3 /* NoteModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB52F2F5FDB5116A2DAD0C0 /* NoteModels.swift */; };
 		6FABE677E5D48465C8995F5F /* LibraryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C317D06B494F22991CCD9A /* LibraryStoreTests.swift */; };
@@ -27,14 +28,15 @@
 		A01A98585D47577FBB8F9507 /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E219C29462AFA57A28B27E /* TestSupport.swift */; };
 		A57D843B2E6C1C747ED760DB /* StickyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6338FF9F1C3A542900650BB2 /* StickyModels.swift */; };
 		AA2FED8952258137174AA74E /* MetadataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9067EF8145E54D0B653D7D /* MetadataStore.swift */; };
-		B17191500F59F3C8A6CAE8BE /* MarkdownRenderEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DF6F982064DFA75F30E63D /* MarkdownRenderEngineTests.swift */; };
-		B44FF929A8CFC7F3E2D52A87 /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = 93E31CE5EB41110567168515 /* Markdown */; };
+		AA31CCF77288FDF53F1CBE2F /* MarkdownEditorIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D35E97A7EB30CBAD0D127FF /* MarkdownEditorIntegrationTests.swift */; };
+		B44FF929A8CFC7F3E2D52A87 /* MarkdownEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 1B66576A34359525749496E6 /* MarkdownEngine */; };
 		B566DAB546E6E1F57E275743 /* StickyWindowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBD07453CB59CAB225A7309 /* StickyWindowCoordinator.swift */; };
 		BDD4B391E0A97A9ADB0E3E92 /* SearchIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B7022EA8EF658D517508D20 /* SearchIndexTests.swift */; };
 		C25FE04C2BD6EF025D794D5F /* LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13B2B687115CFA51EB22776 /* LibraryStore.swift */; };
 		E36C54012CAC3A7CE35793BA /* MetadataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48068E8BCBE6F579C705BCC0 /* MetadataStoreTests.swift */; };
 		E70BA862C51FD56BEE12B4A2 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD604AC92B52E292C21FECC9 /* DirectoryWatcher.swift */; };
 		E7577A542132EA96DA2C3581 /* MainWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E350912BA71EAC94286609B /* MainWindowView.swift */; };
+		F543278011C7F79B82B7D7E1 /* MarkdownEngineCodeBlocks in Frameworks */ = {isa = PBXBuildFile; productRef = 971A484B4ACDAB24706D27B0 /* MarkdownEngineCodeBlocks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,7 +60,9 @@
 		02EF9E7D5EAE116F2314CCFC /* SmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
 		09C317D06B494F22991CCD9A /* LibraryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStoreTests.swift; sourceTree = "<group>"; };
 		161CBEF2796E42E4D5972CC3 /* StickyNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyNoteView.swift; sourceTree = "<group>"; };
+		2A2CE8DA7199C1BDC3C5577E /* GlobalHotKeyController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotKeyController.swift; sourceTree = "<group>"; };
 		2A6A0372661EFC356134D12A /* RepotraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepotraApp.swift; sourceTree = "<group>"; };
+		2D35E97A7EB30CBAD0D127FF /* MarkdownEditorIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownEditorIntegrationTests.swift; sourceTree = "<group>"; };
 		48068E8BCBE6F579C705BCC0 /* MetadataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataStoreTests.swift; sourceTree = "<group>"; };
 		4B291D857C5C373701892DD5 /* LibraryPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryPickerButton.swift; sourceTree = "<group>"; };
 		4C9067EF8145E54D0B653D7D /* MetadataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataStore.swift; sourceTree = "<group>"; };
@@ -66,7 +70,6 @@
 		4F819F8C71B48CC928A929EA /* RepotraUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RepotraUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5ABD7E0EDC4FA7FD64254B3B /* RepotraUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepotraUITests.swift; sourceTree = "<group>"; };
 		5BBD07453CB59CAB225A7309 /* StickyWindowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyWindowCoordinator.swift; sourceTree = "<group>"; };
-		61DF6F982064DFA75F30E63D /* MarkdownRenderEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRenderEngineTests.swift; sourceTree = "<group>"; };
 		6338FF9F1C3A542900650BB2 /* StickyModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyModels.swift; sourceTree = "<group>"; };
 		686369145CA49CF2D15E1DF4 /* LibrarySidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySidebar.swift; sourceTree = "<group>"; };
 		6B7022EA8EF658D517508D20 /* SearchIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchIndexTests.swift; sourceTree = "<group>"; };
@@ -77,8 +80,9 @@
 		9F60B5AC22C2B9AEB65D85AE /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		B118CF169BBEEA8422E4C82D /* Repotra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Repotra.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B13B2B687115CFA51EB22776 /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStore.swift; sourceTree = "<group>"; };
+		BE1A2FDED5DE9386813737D4 /* QuickCaptureCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCaptureCoordinator.swift; sourceTree = "<group>"; };
 		BFB52F2F5FDB5116A2DAD0C0 /* NoteModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModels.swift; sourceTree = "<group>"; };
-		CD7F94363222C9FFB8E27E58 /* MarkdownRenderEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRenderEngine.swift; sourceTree = "<group>"; };
+		CE6151D7EBF47193715376D3 /* MarkdownEngine */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MarkdownEngine; path = Vendor/MarkdownEngine; sourceTree = SOURCE_ROOT; };
 		DD604AC92B52E292C21FECC9 /* DirectoryWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
 		DF3D9A299DB44D928639556A /* PathUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathUtilities.swift; sourceTree = "<group>"; };
 		E67CD373BCEA7EB701C2F896 /* NoteSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteSession.swift; sourceTree = "<group>"; };
@@ -92,7 +96,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B44FF929A8CFC7F3E2D52A87 /* Markdown in Frameworks */,
+				B44FF929A8CFC7F3E2D52A87 /* MarkdownEngine in Frameworks */,
+				F543278011C7F79B82B7D7E1 /* MarkdownEngineCodeBlocks in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,6 +135,14 @@
 				061FAABECA5F6BAE9DCA1A9B /* Utilities */,
 			);
 			path = Repotra;
+			sourceTree = "<group>";
+		};
+		0948D257D55F14EF3C1E5FBF /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				CE6151D7EBF47193715376D3 /* MarkdownEngine */,
+			);
+			name = Packages;
 			sourceTree = "<group>";
 		};
 		289265DCADF5F99286578E95 /* Tests */ = {
@@ -172,6 +185,8 @@
 			isa = PBXGroup;
 			children = (
 				9F60B5AC22C2B9AEB65D85AE /* AppModel.swift */,
+				2A2CE8DA7199C1BDC3C5577E /* GlobalHotKeyController.swift */,
+				BE1A2FDED5DE9386813737D4 /* QuickCaptureCoordinator.swift */,
 				2A6A0372661EFC356134D12A /* RepotraApp.swift */,
 			);
 			path = App;
@@ -191,7 +206,6 @@
 			isa = PBXGroup;
 			children = (
 				FD89B8894D582A0F3DC532A8 /* MarkdownEditorView.swift */,
-				CD7F94363222C9FFB8E27E58 /* MarkdownRenderEngine.swift */,
 			);
 			path = Editor;
 			sourceTree = "<group>";
@@ -219,7 +233,7 @@
 			isa = PBXGroup;
 			children = (
 				09C317D06B494F22991CCD9A /* LibraryStoreTests.swift */,
-				61DF6F982064DFA75F30E63D /* MarkdownRenderEngineTests.swift */,
+				2D35E97A7EB30CBAD0D127FF /* MarkdownEditorIntegrationTests.swift */,
 				48068E8BCBE6F579C705BCC0 /* MetadataStoreTests.swift */,
 				6BD5BC46485F1AAB63E20335 /* NoteSessionTests.swift */,
 				ECAB6FD3B88D910CCE1D21E2 /* PerformanceTests.swift */,
@@ -233,6 +247,7 @@
 		FD78DE7A220EE1B0B8B5865A = {
 			isa = PBXGroup;
 			children = (
+				0948D257D55F14EF3C1E5FBF /* Packages */,
 				2E69B7CADD1D58FE291862A1 /* Sources */,
 				289265DCADF5F99286578E95 /* Tests */,
 				CDAA8DA07C5225D510A6375C /* Products */,
@@ -255,7 +270,8 @@
 			);
 			name = Repotra;
 			packageProductDependencies = (
-				93E31CE5EB41110567168515 /* Markdown */,
+				1B66576A34359525749496E6 /* MarkdownEngine */,
+				971A484B4ACDAB24706D27B0 /* MarkdownEngineCodeBlocks */,
 			);
 			productName = Repotra;
 			productReference = B118CF169BBEEA8422E4C82D /* Repotra.app */;
@@ -321,7 +337,7 @@
 			mainGroup = FD78DE7A220EE1B0B8B5865A;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				4004461D8824D6254078C5A1 /* XCRemoteSwiftPackageReference "swift-markdown" */,
+				453D1D6A53357EF4F42EB9B2 /* XCLocalSwiftPackageReference "Vendor/MarkdownEngine" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CDAA8DA07C5225D510A6375C /* Products */;
@@ -341,7 +357,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6FABE677E5D48465C8995F5F /* LibraryStoreTests.swift in Sources */,
-				B17191500F59F3C8A6CAE8BE /* MarkdownRenderEngineTests.swift in Sources */,
+				AA31CCF77288FDF53F1CBE2F /* MarkdownEditorIntegrationTests.swift in Sources */,
 				E36C54012CAC3A7CE35793BA /* MetadataStoreTests.swift in Sources */,
 				6B34D99721329C9E091FC163 /* NoteSessionTests.swift in Sources */,
 				246D019CED4620D102188DD5 /* PerformanceTests.swift in Sources */,
@@ -357,17 +373,18 @@
 			files = (
 				15521330FC39C484CF8344F3 /* AppModel.swift in Sources */,
 				E70BA862C51FD56BEE12B4A2 /* DirectoryWatcher.swift in Sources */,
+				2A4EFF535136FFC3A54F9B44 /* GlobalHotKeyController.swift in Sources */,
 				3590F25EFFB77092B4F8A56E /* LibraryLocationPicker.swift in Sources */,
 				715D66AC3240D4B3AEBA1B92 /* LibraryPickerButton.swift in Sources */,
 				9453ED29D73E054A2627512B /* LibrarySidebar.swift in Sources */,
 				C25FE04C2BD6EF025D794D5F /* LibraryStore.swift in Sources */,
 				E7577A542132EA96DA2C3581 /* MainWindowView.swift in Sources */,
 				1F6C160BBB8B191709AAFD14 /* MarkdownEditorView.swift in Sources */,
-				1BFB6DF462C9CF8E7ACB862F /* MarkdownRenderEngine.swift in Sources */,
 				AA2FED8952258137174AA74E /* MetadataStore.swift in Sources */,
 				6BB4550A6BC70B3FE563F4E3 /* NoteModels.swift in Sources */,
 				3D0091C45D5E8E6CF29C71A2 /* NoteSession.swift in Sources */,
 				48B07A88D94F3CC91DD3ED0B /* PathUtilities.swift in Sources */,
+				66D6B75DE2D87ABDF72730D2 /* QuickCaptureCoordinator.swift in Sources */,
 				4DB2749A975B16BD5579BE64 /* RepotraApp.swift in Sources */,
 				4894291EAE1CE28E3A4502D9 /* SearchIndex.swift in Sources */,
 				A57D843B2E6C1C747ED760DB /* StickyModels.swift in Sources */,
@@ -666,22 +683,21 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		4004461D8824D6254078C5A1 /* XCRemoteSwiftPackageReference "swift-markdown" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/swiftlang/swift-markdown.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.8.0;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		453D1D6A53357EF4F42EB9B2 /* XCLocalSwiftPackageReference "Vendor/MarkdownEngine" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Vendor/MarkdownEngine;
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		93E31CE5EB41110567168515 /* Markdown */ = {
+		1B66576A34359525749496E6 /* MarkdownEngine */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4004461D8824D6254078C5A1 /* XCRemoteSwiftPackageReference "swift-markdown" */;
-			productName = Markdown;
+			productName = MarkdownEngine;
+		};
+		971A484B4ACDAB24706D27B0 /* MarkdownEngineCodeBlocks */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MarkdownEngineCodeBlocks;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
