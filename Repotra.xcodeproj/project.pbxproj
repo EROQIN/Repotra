@@ -14,6 +14,7 @@
 		1F6C160BBB8B191709AAFD14 /* MarkdownEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD89B8894D582A0F3DC532A8 /* MarkdownEditorView.swift */; };
 		246D019CED4620D102188DD5 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAB6FD3B88D910CCE1D21E2 /* PerformanceTests.swift */; };
 		3142FB03157255405D3B8C69 /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EF9E7D5EAE116F2314CCFC /* SmokeTests.swift */; };
+		3590F25EFFB77092B4F8A56E /* LibraryLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAC5A379EE643AFBCE17CED /* LibraryLocationPicker.swift */; };
 		3D0091C45D5E8E6CF29C71A2 /* NoteSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67CD373BCEA7EB701C2F896 /* NoteSession.swift */; };
 		4894291EAE1CE28E3A4502D9 /* SearchIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCE30BC3AD51D73AB87D5CC4 /* SearchIndex.swift */; };
 		48B07A88D94F3CC91DD3ED0B /* PathUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3D9A299DB44D928639556A /* PathUtilities.swift */; };
@@ -21,6 +22,7 @@
 		6B34D99721329C9E091FC163 /* NoteSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BD5BC46485F1AAB63E20335 /* NoteSessionTests.swift */; };
 		6BB4550A6BC70B3FE563F4E3 /* NoteModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB52F2F5FDB5116A2DAD0C0 /* NoteModels.swift */; };
 		6FABE677E5D48465C8995F5F /* LibraryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C317D06B494F22991CCD9A /* LibraryStoreTests.swift */; };
+		715D66AC3240D4B3AEBA1B92 /* LibraryPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B291D857C5C373701892DD5 /* LibraryPickerButton.swift */; };
 		9453ED29D73E054A2627512B /* LibrarySidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686369145CA49CF2D15E1DF4 /* LibrarySidebar.swift */; };
 		A01A98585D47577FBB8F9507 /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E219C29462AFA57A28B27E /* TestSupport.swift */; };
 		A57D843B2E6C1C747ED760DB /* StickyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6338FF9F1C3A542900650BB2 /* StickyModels.swift */; };
@@ -58,6 +60,7 @@
 		161CBEF2796E42E4D5972CC3 /* StickyNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyNoteView.swift; sourceTree = "<group>"; };
 		2A6A0372661EFC356134D12A /* RepotraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepotraApp.swift; sourceTree = "<group>"; };
 		48068E8BCBE6F579C705BCC0 /* MetadataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataStoreTests.swift; sourceTree = "<group>"; };
+		4B291D857C5C373701892DD5 /* LibraryPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryPickerButton.swift; sourceTree = "<group>"; };
 		4C9067EF8145E54D0B653D7D /* MetadataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataStore.swift; sourceTree = "<group>"; };
 		4E350912BA71EAC94286609B /* MainWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowView.swift; sourceTree = "<group>"; };
 		4F819F8C71B48CC928A929EA /* RepotraUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RepotraUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -70,6 +73,7 @@
 		6BD5BC46485F1AAB63E20335 /* NoteSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteSessionTests.swift; sourceTree = "<group>"; };
 		7179BE8241A3A30271142CD7 /* RepotraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RepotraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		74E219C29462AFA57A28B27E /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
+		7DAC5A379EE643AFBCE17CED /* LibraryLocationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryLocationPicker.swift; sourceTree = "<group>"; };
 		9F60B5AC22C2B9AEB65D85AE /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		B118CF169BBEEA8422E4C82D /* Repotra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Repotra.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B13B2B687115CFA51EB22776 /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStore.swift; sourceTree = "<group>"; };
@@ -148,6 +152,8 @@
 		3DA85CCD79F04EFE5ECC84E7 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				7DAC5A379EE643AFBCE17CED /* LibraryLocationPicker.swift */,
+				4B291D857C5C373701892DD5 /* LibraryPickerButton.swift */,
 				686369145CA49CF2D15E1DF4 /* LibrarySidebar.swift */,
 				4E350912BA71EAC94286609B /* MainWindowView.swift */,
 			);
@@ -351,6 +357,8 @@
 			files = (
 				15521330FC39C484CF8344F3 /* AppModel.swift in Sources */,
 				E70BA862C51FD56BEE12B4A2 /* DirectoryWatcher.swift in Sources */,
+				3590F25EFFB77092B4F8A56E /* LibraryLocationPicker.swift in Sources */,
+				715D66AC3240D4B3AEBA1B92 /* LibraryPickerButton.swift in Sources */,
 				9453ED29D73E054A2627512B /* LibrarySidebar.swift in Sources */,
 				C25FE04C2BD6EF025D794D5F /* LibraryStore.swift in Sources */,
 				E7577A542132EA96DA2C3581 /* MainWindowView.swift in Sources */,

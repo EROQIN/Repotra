@@ -1,4 +1,3 @@
-import AppKit
 import Foundation
 import Observation
 
@@ -12,6 +11,7 @@ final class AppModel {
     var searchQuery = ""
     private(set) var searchResults: [SearchResult] = []
     private(set) var isLoading = false
+    private(set) var isLibraryPickerPresented = false
     var errorMessage: String?
 
     @ObservationIgnored private var store: LibraryStore?
@@ -21,7 +21,7 @@ final class AppModel {
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
     @ObservationIgnored private var searchTask: Task<Void, Never>?
     @ObservationIgnored private var hasStarted = false
-    @ObservationIgnored private var libraryPanel: NSOpenPanel?
+    @ObservationIgnored private var hasPresentedInitialLibraryPicker = false
     @ObservationIgnored let stickyWindows = StickyWindowCoordinator()
 
     var selectedSession: NoteSession? {
@@ -45,35 +45,6 @@ final class AppModel {
             if FileManager.default.fileExists(atPath: url.path) {
                 await openLibrary(url)
             }
-        }
-    }
-
-    func chooseLibrary() {
-        if let libraryPanel {
-            libraryPanel.makeKeyAndOrderFront(nil)
-            return
-        }
-        let panel = NSOpenPanel()
-        panel.title = "选择 Repotra 资料库"
-        panel.message = "选择或新建一个文件夹来保存 Markdown 笔记。"
-        panel.prompt = "打开资料库"
-        panel.canChooseFiles = false
-        panel.canChooseDirectories = true
-        panel.canCreateDirectories = true
-        panel.allowsMultipleSelection = false
-        panel.directoryURL = libraryURL
-        libraryPanel = panel
-
-        let completion: (NSApplication.ModalResponse) -> Void = { [weak self, weak panel] response in
-            guard let self else { return }
-            libraryPanel = nil
-            guard response == .OK, let url = panel?.url else { return }
-            Task { await self.openLibrary(url) }
-        }
-        if let hostWindow = NSApp.keyWindow {
-            panel.beginSheetModal(for: hostWindow, completionHandler: completion)
-        } else {
-            panel.begin(completionHandler: completion)
         }
     }
 
@@ -107,6 +78,25 @@ final class AppModel {
             libraryURL = nil
             tree = []
         }
+    }
+
+    func presentLibraryPicker() {
+        isLibraryPickerPresented = true
+    }
+
+    func dismissLibraryPicker() {
+        isLibraryPickerPresented = false
+    }
+
+    func selectLibrary(_ url: URL) async {
+        isLibraryPickerPresented = false
+        await openLibrary(url)
+    }
+
+    func presentInitialLibraryPicker() {
+        guard !hasPresentedInitialLibraryPicker else { return }
+        hasPresentedInitialLibraryPicker = true
+        presentLibraryPicker()
     }
 
     func select(path: String) async {

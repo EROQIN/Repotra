@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 @main
@@ -9,13 +10,14 @@ struct RepotraApp: App {
         WindowGroup {
             MainWindowView()
                 .environment(model)
-                .task { await model.start() }
                 .onAppear { appDelegate.model = model }
                 .frame(minWidth: 760, minHeight: 520)
         }
         .defaultSize(width: 1120, height: 760)
         .commands {
             CommandGroup(after: .newItem) {
+                Button("打开资料库…") { model.presentLibraryPicker() }
+                    .keyboardShortcut("o", modifiers: [.command])
                 Button("新建笔记") { Task { await model.createNote() } }
                     .keyboardShortcut("n", modifiers: [.command])
                 Button("新建文件夹") { Task { await model.createFolder() } }
@@ -64,7 +66,8 @@ private struct SettingsView: View {
                     .truncationMode(.middle)
                     .textSelection(.enabled)
             }
-            Button("切换资料库…") { model.chooseLibrary() }
+            LibraryPickerButton("切换资料库…")
+                .fixedSize()
         }
         .formStyle(.grouped)
         .padding()

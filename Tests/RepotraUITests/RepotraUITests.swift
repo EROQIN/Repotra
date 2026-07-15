@@ -17,14 +17,14 @@ final class RepotraUITests: XCTestCase {
         XCTAssertTrue(chooseButton.waitForExistence(timeout: 3))
         chooseButton.click()
 
-        let openButton = app.buttons["打开资料库"]
-        XCTAssertTrue(openButton.waitForExistence(timeout: 3))
-        app.typeKey(.escape, modifierFlags: [])
-        let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: openButton)
+        let cancelButton = app.buttons["取消"]
+        XCTAssertTrue(cancelButton.waitForExistence(timeout: 3))
+        cancelButton.click()
+        let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: cancelButton)
         XCTAssertEqual(XCTWaiter.wait(for: [dismissed], timeout: 3), .completed)
 
         chooseButton.click()
-        XCTAssertTrue(openButton.waitForExistence(timeout: 3))
-        app.typeKey(.escape, modifierFlags: [])
+        XCTAssertTrue(cancelButton.waitForExistence(timeout: 3))
+        cancelButton.click()
     }
 }

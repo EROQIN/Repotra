@@ -25,6 +25,17 @@ struct MainWindowView: View {
                     .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
             }
         }
+        .sheet(isPresented: Binding(
+            get: { model.isLibraryPickerPresented },
+            set: {
+                if !$0 {
+                    model.dismissLibraryPicker()
+                }
+            }
+        )) {
+            LibraryLocationPicker()
+                .environment(model)
+        }
         .alert("Repotra", isPresented: Binding(
             get: { model.errorMessage != nil },
             set: {
@@ -108,9 +119,8 @@ private struct WelcomeView: View {
                 .font(.largeTitle.bold())
             Text("轻量 Markdown 笔记，也可以贴在桌面上。")
                 .foregroundStyle(.secondary)
-            Button("选择资料库…") { model.chooseLibrary() }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+            LibraryPickerButton("选择资料库…", isProminent: true)
+                .fixedSize()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
