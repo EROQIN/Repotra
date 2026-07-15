@@ -1,0 +1,681 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		12DE25B7E773E93528FEE50B /* StickyNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161CBEF2796E42E4D5972CC3 /* StickyNoteView.swift */; };
+		134631219BD2E8AAD099C0B5 /* RepotraUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ABD7E0EDC4FA7FD64254B3B /* RepotraUITests.swift */; };
+		15521330FC39C484CF8344F3 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F60B5AC22C2B9AEB65D85AE /* AppModel.swift */; };
+		1BFB6DF462C9CF8E7ACB862F /* MarkdownRenderEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7F94363222C9FFB8E27E58 /* MarkdownRenderEngine.swift */; };
+		1F6C160BBB8B191709AAFD14 /* MarkdownEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD89B8894D582A0F3DC532A8 /* MarkdownEditorView.swift */; };
+		246D019CED4620D102188DD5 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAB6FD3B88D910CCE1D21E2 /* PerformanceTests.swift */; };
+		3142FB03157255405D3B8C69 /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EF9E7D5EAE116F2314CCFC /* SmokeTests.swift */; };
+		3D0091C45D5E8E6CF29C71A2 /* NoteSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67CD373BCEA7EB701C2F896 /* NoteSession.swift */; };
+		4894291EAE1CE28E3A4502D9 /* SearchIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCE30BC3AD51D73AB87D5CC4 /* SearchIndex.swift */; };
+		48B07A88D94F3CC91DD3ED0B /* PathUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3D9A299DB44D928639556A /* PathUtilities.swift */; };
+		4DB2749A975B16BD5579BE64 /* RepotraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6A0372661EFC356134D12A /* RepotraApp.swift */; };
+		6B34D99721329C9E091FC163 /* NoteSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BD5BC46485F1AAB63E20335 /* NoteSessionTests.swift */; };
+		6BB4550A6BC70B3FE563F4E3 /* NoteModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB52F2F5FDB5116A2DAD0C0 /* NoteModels.swift */; };
+		6FABE677E5D48465C8995F5F /* LibraryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C317D06B494F22991CCD9A /* LibraryStoreTests.swift */; };
+		9453ED29D73E054A2627512B /* LibrarySidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686369145CA49CF2D15E1DF4 /* LibrarySidebar.swift */; };
+		A01A98585D47577FBB8F9507 /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E219C29462AFA57A28B27E /* TestSupport.swift */; };
+		A57D843B2E6C1C747ED760DB /* StickyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6338FF9F1C3A542900650BB2 /* StickyModels.swift */; };
+		AA2FED8952258137174AA74E /* MetadataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9067EF8145E54D0B653D7D /* MetadataStore.swift */; };
+		B17191500F59F3C8A6CAE8BE /* MarkdownRenderEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DF6F982064DFA75F30E63D /* MarkdownRenderEngineTests.swift */; };
+		B44FF929A8CFC7F3E2D52A87 /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = 93E31CE5EB41110567168515 /* Markdown */; };
+		B566DAB546E6E1F57E275743 /* StickyWindowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBD07453CB59CAB225A7309 /* StickyWindowCoordinator.swift */; };
+		BDD4B391E0A97A9ADB0E3E92 /* SearchIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B7022EA8EF658D517508D20 /* SearchIndexTests.swift */; };
+		C25FE04C2BD6EF025D794D5F /* LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13B2B687115CFA51EB22776 /* LibraryStore.swift */; };
+		E36C54012CAC3A7CE35793BA /* MetadataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48068E8BCBE6F579C705BCC0 /* MetadataStoreTests.swift */; };
+		E70BA862C51FD56BEE12B4A2 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD604AC92B52E292C21FECC9 /* DirectoryWatcher.swift */; };
+		E7577A542132EA96DA2C3581 /* MainWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E350912BA71EAC94286609B /* MainWindowView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7B978CE38166D02C788B1E87 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A2CAB9E5C06A5CF164B491EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0DB6796D26E1A75EA75BDFF8;
+			remoteInfo = Repotra;
+		};
+		FC756D49BDB05B4D10E91087 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A2CAB9E5C06A5CF164B491EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0DB6796D26E1A75EA75BDFF8;
+			remoteInfo = Repotra;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		02EF9E7D5EAE116F2314CCFC /* SmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
+		09C317D06B494F22991CCD9A /* LibraryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStoreTests.swift; sourceTree = "<group>"; };
+		161CBEF2796E42E4D5972CC3 /* StickyNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyNoteView.swift; sourceTree = "<group>"; };
+		2A6A0372661EFC356134D12A /* RepotraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepotraApp.swift; sourceTree = "<group>"; };
+		48068E8BCBE6F579C705BCC0 /* MetadataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataStoreTests.swift; sourceTree = "<group>"; };
+		4C9067EF8145E54D0B653D7D /* MetadataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataStore.swift; sourceTree = "<group>"; };
+		4E350912BA71EAC94286609B /* MainWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowView.swift; sourceTree = "<group>"; };
+		4F819F8C71B48CC928A929EA /* RepotraUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RepotraUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5ABD7E0EDC4FA7FD64254B3B /* RepotraUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepotraUITests.swift; sourceTree = "<group>"; };
+		5BBD07453CB59CAB225A7309 /* StickyWindowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyWindowCoordinator.swift; sourceTree = "<group>"; };
+		61DF6F982064DFA75F30E63D /* MarkdownRenderEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRenderEngineTests.swift; sourceTree = "<group>"; };
+		6338FF9F1C3A542900650BB2 /* StickyModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyModels.swift; sourceTree = "<group>"; };
+		686369145CA49CF2D15E1DF4 /* LibrarySidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySidebar.swift; sourceTree = "<group>"; };
+		6B7022EA8EF658D517508D20 /* SearchIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchIndexTests.swift; sourceTree = "<group>"; };
+		6BD5BC46485F1AAB63E20335 /* NoteSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteSessionTests.swift; sourceTree = "<group>"; };
+		7179BE8241A3A30271142CD7 /* RepotraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RepotraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		74E219C29462AFA57A28B27E /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
+		9F60B5AC22C2B9AEB65D85AE /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		B118CF169BBEEA8422E4C82D /* Repotra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Repotra.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B13B2B687115CFA51EB22776 /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStore.swift; sourceTree = "<group>"; };
+		BFB52F2F5FDB5116A2DAD0C0 /* NoteModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModels.swift; sourceTree = "<group>"; };
+		CD7F94363222C9FFB8E27E58 /* MarkdownRenderEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRenderEngine.swift; sourceTree = "<group>"; };
+		DD604AC92B52E292C21FECC9 /* DirectoryWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
+		DF3D9A299DB44D928639556A /* PathUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathUtilities.swift; sourceTree = "<group>"; };
+		E67CD373BCEA7EB701C2F896 /* NoteSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteSession.swift; sourceTree = "<group>"; };
+		ECAB6FD3B88D910CCE1D21E2 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
+		FCE30BC3AD51D73AB87D5CC4 /* SearchIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchIndex.swift; sourceTree = "<group>"; };
+		FD89B8894D582A0F3DC532A8 /* MarkdownEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownEditorView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F2904BE485B0628E21470DC8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B44FF929A8CFC7F3E2D52A87 /* Markdown in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		05FB10A18CB4914C3DB3940A /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				DD604AC92B52E292C21FECC9 /* DirectoryWatcher.swift */,
+				B13B2B687115CFA51EB22776 /* LibraryStore.swift */,
+				4C9067EF8145E54D0B653D7D /* MetadataStore.swift */,
+				FCE30BC3AD51D73AB87D5CC4 /* SearchIndex.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		061FAABECA5F6BAE9DCA1A9B /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				DF3D9A299DB44D928639556A /* PathUtilities.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		06F050201B70ED9315457FC2 /* Repotra */ = {
+			isa = PBXGroup;
+			children = (
+				51CD38D1FC66E7AE7EA5F1DC /* App */,
+				AD774295614580217B8E3007 /* Editor */,
+				86275CE49A1BC32C8997ED21 /* Models */,
+				05FB10A18CB4914C3DB3940A /* Services */,
+				B62F5EAB5B5CDAF2F966C369 /* Sticky */,
+				3DA85CCD79F04EFE5ECC84E7 /* UI */,
+				061FAABECA5F6BAE9DCA1A9B /* Utilities */,
+			);
+			path = Repotra;
+			sourceTree = "<group>";
+		};
+		289265DCADF5F99286578E95 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				E06A937D86EAEF9EA0F63CB4 /* RepotraTests */,
+				4084831F7B0A9CA7D868B871 /* RepotraUITests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		2E69B7CADD1D58FE291862A1 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				06F050201B70ED9315457FC2 /* Repotra */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		3DA85CCD79F04EFE5ECC84E7 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				686369145CA49CF2D15E1DF4 /* LibrarySidebar.swift */,
+				4E350912BA71EAC94286609B /* MainWindowView.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		4084831F7B0A9CA7D868B871 /* RepotraUITests */ = {
+			isa = PBXGroup;
+			children = (
+				5ABD7E0EDC4FA7FD64254B3B /* RepotraUITests.swift */,
+			);
+			path = RepotraUITests;
+			sourceTree = "<group>";
+		};
+		51CD38D1FC66E7AE7EA5F1DC /* App */ = {
+			isa = PBXGroup;
+			children = (
+				9F60B5AC22C2B9AEB65D85AE /* AppModel.swift */,
+				2A6A0372661EFC356134D12A /* RepotraApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		86275CE49A1BC32C8997ED21 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BFB52F2F5FDB5116A2DAD0C0 /* NoteModels.swift */,
+				E67CD373BCEA7EB701C2F896 /* NoteSession.swift */,
+				6338FF9F1C3A542900650BB2 /* StickyModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AD774295614580217B8E3007 /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				FD89B8894D582A0F3DC532A8 /* MarkdownEditorView.swift */,
+				CD7F94363222C9FFB8E27E58 /* MarkdownRenderEngine.swift */,
+			);
+			path = Editor;
+			sourceTree = "<group>";
+		};
+		B62F5EAB5B5CDAF2F966C369 /* Sticky */ = {
+			isa = PBXGroup;
+			children = (
+				161CBEF2796E42E4D5972CC3 /* StickyNoteView.swift */,
+				5BBD07453CB59CAB225A7309 /* StickyWindowCoordinator.swift */,
+			);
+			path = Sticky;
+			sourceTree = "<group>";
+		};
+		CDAA8DA07C5225D510A6375C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B118CF169BBEEA8422E4C82D /* Repotra.app */,
+				7179BE8241A3A30271142CD7 /* RepotraTests.xctest */,
+				4F819F8C71B48CC928A929EA /* RepotraUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E06A937D86EAEF9EA0F63CB4 /* RepotraTests */ = {
+			isa = PBXGroup;
+			children = (
+				09C317D06B494F22991CCD9A /* LibraryStoreTests.swift */,
+				61DF6F982064DFA75F30E63D /* MarkdownRenderEngineTests.swift */,
+				48068E8BCBE6F579C705BCC0 /* MetadataStoreTests.swift */,
+				6BD5BC46485F1AAB63E20335 /* NoteSessionTests.swift */,
+				ECAB6FD3B88D910CCE1D21E2 /* PerformanceTests.swift */,
+				6B7022EA8EF658D517508D20 /* SearchIndexTests.swift */,
+				02EF9E7D5EAE116F2314CCFC /* SmokeTests.swift */,
+				74E219C29462AFA57A28B27E /* TestSupport.swift */,
+			);
+			path = RepotraTests;
+			sourceTree = "<group>";
+		};
+		FD78DE7A220EE1B0B8B5865A = {
+			isa = PBXGroup;
+			children = (
+				2E69B7CADD1D58FE291862A1 /* Sources */,
+				289265DCADF5F99286578E95 /* Tests */,
+				CDAA8DA07C5225D510A6375C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0DB6796D26E1A75EA75BDFF8 /* Repotra */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CE3D0A388FA766E216020B08 /* Build configuration list for PBXNativeTarget "Repotra" */;
+			buildPhases = (
+				A576D8CD1859621E623A8F9B /* Sources */,
+				F2904BE485B0628E21470DC8 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Repotra;
+			packageProductDependencies = (
+				93E31CE5EB41110567168515 /* Markdown */,
+			);
+			productName = Repotra;
+			productReference = B118CF169BBEEA8422E4C82D /* Repotra.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1BA05C38E5083DB7E8529305 /* RepotraTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FAA3C3AB7EA7E368856AFBA6 /* Build configuration list for PBXNativeTarget "RepotraTests" */;
+			buildPhases = (
+				714D6C92306E99379DC52B7D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8DFB68F81522D904E4698930 /* PBXTargetDependency */,
+			);
+			name = RepotraTests;
+			packageProductDependencies = (
+			);
+			productName = RepotraTests;
+			productReference = 7179BE8241A3A30271142CD7 /* RepotraTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		79ABFD72915031D564632C47 /* RepotraUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 017FB37037F324268FFDC36F /* Build configuration list for PBXNativeTarget "RepotraUITests" */;
+			buildPhases = (
+				FC9CCFA80BA40379DB1F0A94 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				08DCE8D587B182C32259BCE5 /* PBXTargetDependency */,
+			);
+			name = RepotraUITests;
+			packageProductDependencies = (
+			);
+			productName = RepotraUITests;
+			productReference = 4F819F8C71B48CC928A929EA /* RepotraUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A2CAB9E5C06A5CF164B491EE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					79ABFD72915031D564632C47 = {
+						TestTargetID = 0DB6796D26E1A75EA75BDFF8;
+					};
+				};
+			};
+			buildConfigurationList = BA69C6B8C6A1191092E3EFA3 /* Build configuration list for PBXProject "Repotra" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = FD78DE7A220EE1B0B8B5865A;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4004461D8824D6254078C5A1 /* XCRemoteSwiftPackageReference "swift-markdown" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = CDAA8DA07C5225D510A6375C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0DB6796D26E1A75EA75BDFF8 /* Repotra */,
+				1BA05C38E5083DB7E8529305 /* RepotraTests */,
+				79ABFD72915031D564632C47 /* RepotraUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		714D6C92306E99379DC52B7D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6FABE677E5D48465C8995F5F /* LibraryStoreTests.swift in Sources */,
+				B17191500F59F3C8A6CAE8BE /* MarkdownRenderEngineTests.swift in Sources */,
+				E36C54012CAC3A7CE35793BA /* MetadataStoreTests.swift in Sources */,
+				6B34D99721329C9E091FC163 /* NoteSessionTests.swift in Sources */,
+				246D019CED4620D102188DD5 /* PerformanceTests.swift in Sources */,
+				BDD4B391E0A97A9ADB0E3E92 /* SearchIndexTests.swift in Sources */,
+				3142FB03157255405D3B8C69 /* SmokeTests.swift in Sources */,
+				A01A98585D47577FBB8F9507 /* TestSupport.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A576D8CD1859621E623A8F9B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				15521330FC39C484CF8344F3 /* AppModel.swift in Sources */,
+				E70BA862C51FD56BEE12B4A2 /* DirectoryWatcher.swift in Sources */,
+				9453ED29D73E054A2627512B /* LibrarySidebar.swift in Sources */,
+				C25FE04C2BD6EF025D794D5F /* LibraryStore.swift in Sources */,
+				E7577A542132EA96DA2C3581 /* MainWindowView.swift in Sources */,
+				1F6C160BBB8B191709AAFD14 /* MarkdownEditorView.swift in Sources */,
+				1BFB6DF462C9CF8E7ACB862F /* MarkdownRenderEngine.swift in Sources */,
+				AA2FED8952258137174AA74E /* MetadataStore.swift in Sources */,
+				6BB4550A6BC70B3FE563F4E3 /* NoteModels.swift in Sources */,
+				3D0091C45D5E8E6CF29C71A2 /* NoteSession.swift in Sources */,
+				48B07A88D94F3CC91DD3ED0B /* PathUtilities.swift in Sources */,
+				4DB2749A975B16BD5579BE64 /* RepotraApp.swift in Sources */,
+				4894291EAE1CE28E3A4502D9 /* SearchIndex.swift in Sources */,
+				A57D843B2E6C1C747ED760DB /* StickyModels.swift in Sources */,
+				12DE25B7E773E93528FEE50B /* StickyNoteView.swift in Sources */,
+				B566DAB546E6E1F57E275743 /* StickyWindowCoordinator.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FC9CCFA80BA40379DB1F0A94 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				134631219BD2E8AAD099C0B5 /* RepotraUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		08DCE8D587B182C32259BCE5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0DB6796D26E1A75EA75BDFF8 /* Repotra */;
+			targetProxy = 7B978CE38166D02C788B1E87 /* PBXContainerItemProxy */;
+		};
+		8DFB68F81522D904E4698930 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0DB6796D26E1A75EA75BDFF8 /* Repotra */;
+			targetProxy = FC756D49BDB05B4D10E91087 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		043DF46A240A49F9F5E72A1E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.erokin.RepotraTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Repotra.app/Contents/MacOS/Repotra";
+			};
+			name = Release;
+		};
+		3C4B38DFF11A3F0F655E1211 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Config/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.erokin.Repotra;
+				PRODUCT_NAME = Repotra;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4563CA2A69712C4A5A10A268 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		67BAA2216CC45548723FC307 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.erokin.RepotraUITests;
+				SDKROOT = macosx;
+				TEST_TARGET_NAME = Repotra;
+			};
+			name = Debug;
+		};
+		B0D4C80628CA9BDD48F25D64 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Config/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.erokin.Repotra;
+				PRODUCT_NAME = Repotra;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		B817FB89B5E0BDD8A654F52B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.erokin.RepotraTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Repotra.app/Contents/MacOS/Repotra";
+			};
+			name = Debug;
+		};
+		B9C5DE156A5664929C62E818 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		EDC7030DAD4A692F2866365F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.erokin.RepotraUITests;
+				SDKROOT = macosx;
+				TEST_TARGET_NAME = Repotra;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		017FB37037F324268FFDC36F /* Build configuration list for PBXNativeTarget "RepotraUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				67BAA2216CC45548723FC307 /* Debug */,
+				EDC7030DAD4A692F2866365F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BA69C6B8C6A1191092E3EFA3 /* Build configuration list for PBXProject "Repotra" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B9C5DE156A5664929C62E818 /* Debug */,
+				4563CA2A69712C4A5A10A268 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CE3D0A388FA766E216020B08 /* Build configuration list for PBXNativeTarget "Repotra" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B0D4C80628CA9BDD48F25D64 /* Debug */,
+				3C4B38DFF11A3F0F655E1211 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FAA3C3AB7EA7E368856AFBA6 /* Build configuration list for PBXNativeTarget "RepotraTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B817FB89B5E0BDD8A654F52B /* Debug */,
+				043DF46A240A49F9F5E72A1E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4004461D8824D6254078C5A1 /* XCRemoteSwiftPackageReference "swift-markdown" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swiftlang/swift-markdown.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.8.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		93E31CE5EB41110567168515 /* Markdown */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4004461D8824D6254078C5A1 /* XCRemoteSwiftPackageReference "swift-markdown" */;
+			productName = Markdown;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A2CAB9E5C06A5CF164B491EE /* Project object */;
+}

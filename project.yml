@@ -1,0 +1,89 @@
+name: Repotra
+options:
+  bundleIdPrefix: com.erokin
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+  xcodeVersion: "16.0"
+
+packages:
+  swift-markdown:
+    url: https://github.com/swiftlang/swift-markdown.git
+    from: 0.8.0
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    ENABLE_HARDENED_RUNTIME: NO
+    CODE_SIGNING_ALLOWED: NO
+
+targets:
+  Repotra:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/Repotra
+    dependencies:
+      - package: swift-markdown
+        product: Markdown
+    info:
+      path: Config/Info.plist
+      properties:
+        CFBundleDisplayName: Repotra
+        CFBundleName: Repotra
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        LSApplicationCategoryType: public.app-category.productivity
+        LSMinimumSystemVersion: "14.0"
+        NSHighResolutionCapable: true
+        NSHumanReadableCopyright: "Copyright © 2026 Repotra"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.erokin.Repotra
+        PRODUCT_NAME: Repotra
+        GENERATE_INFOPLIST_FILE: NO
+
+  RepotraTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests/RepotraTests
+    dependencies:
+      - target: Repotra
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.erokin.RepotraTests
+        GENERATE_INFOPLIST_FILE: YES
+
+  RepotraUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources:
+      - path: Tests/RepotraUITests
+    dependencies:
+      - target: Repotra
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.erokin.RepotraUITests
+        TEST_TARGET_NAME: Repotra
+        GENERATE_INFOPLIST_FILE: YES
+
+schemes:
+  Repotra:
+    build:
+      targets:
+        Repotra: all
+        RepotraTests: [test]
+        RepotraUITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - name: RepotraTests
+          parallelizable: true
+        - name: RepotraUITests
+          parallelizable: false
