@@ -115,7 +115,10 @@ private struct QuickCaptureView: View {
                     .font(.system(size: 11))
                     .foregroundStyle(.tertiary)
             }
-            .padding(.horizontal, 12)
+            // The native traffic lights occupy the first ~60pt of the title
+            // bar. Keep the title on that same row with a safe leading inset.
+            .padding(.leading, 72)
+            .padding(.trailing, 12)
             .frame(height: 34)
             .background(.ultraThinMaterial)
             Divider().opacity(0.35)
@@ -129,5 +132,8 @@ private struct QuickCaptureView: View {
             )
         }
         .background(Color(nsColor: .textBackgroundColor))
+        // The panel uses a transparent full-size title bar. Move this compact
+        // header into that title-bar row instead of placing it below the lights.
+        .ignoresSafeArea(.container, edges: .top)
     }
 }
