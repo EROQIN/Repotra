@@ -38,6 +38,8 @@ final class QuickCaptureCoordinator: NSObject, NSWindowDelegate {
         panel.title = "快速笔记"
         panel.titleVisibility = .hidden
         panel.titlebarAppearsTransparent = true
+        panel.standardWindowButton(.closeButton)?.isHidden = false
+        panel.standardWindowButton(.closeButton)?.toolTip = "隐藏快速笔记"
         panel.isFloatingPanel = true
         panel.level = .floating
         panel.hidesOnDeactivate = false
@@ -49,7 +51,6 @@ final class QuickCaptureCoordinator: NSObject, NSWindowDelegate {
         panel.contentView = NSHostingView(rootView: QuickCaptureView(
             session: session,
             rootURL: rootURL,
-            onClose: { [weak self] in self?.hide() },
             importImageFile: importImageFile,
             importImageData: importImageData
         ))
@@ -98,29 +99,26 @@ private final class QuickCapturePanel: NSPanel {
 private struct QuickCaptureView: View {
     @Bindable var session: NoteSession
     let rootURL: URL
-    let onClose: () -> Void
     let importImageFile: @MainActor (URL) async -> String?
     let importImageData: @MainActor (Data) async -> String?
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 Image(systemName: "bolt.fill")
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.yellow)
                 Text("快速笔记")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: 13, weight: .semibold))
                 Spacer()
                 Text(session.isDirty ? "未保存" : "已保存")
-                    .font(.caption)
+                    .font(.system(size: 11))
                     .foregroundStyle(.tertiary)
-                Button(action: onClose) { Image(systemName: "xmark") }
-                    .buttonStyle(.plain)
-                    .help("隐藏快速笔记 Esc")
             }
-            .padding(.horizontal, 14)
-            .frame(height: 42)
+            .padding(.horizontal, 12)
+            .frame(height: 34)
             .background(.ultraThinMaterial)
-            Divider().opacity(0.5)
+            Divider().opacity(0.35)
             MarkdownEditorView(
                 session: session,
                 rootURL: rootURL,
