@@ -4,6 +4,11 @@ import Testing
 
 @Suite("MetadataStore")
 struct MetadataStoreTests {
+    @Test("new stickies default to screenshot-style always on top")
+    func newStickyDefaultsToAlwaysOnTop() {
+        #expect(StickyRecord(notePath: "note.md").alwaysOnTop)
+    }
+
     @Test("persists stickies and migrates paths")
     func stickyPersistence() async throws {
         let library = try TemporaryLibrary()

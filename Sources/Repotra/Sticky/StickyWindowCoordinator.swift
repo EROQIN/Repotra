@@ -153,7 +153,11 @@ final class StickyWindowCoordinator: NSObject, NSWindowDelegate {
         panel.isOpaque = false
         panel.backgroundColor = .clear
         panel.minSize = NSSize(width: 260, height: 220)
-        panel.collectionBehavior = [.managed, .participatesInCycle]
+        // Treat a sticky like a screenshot pin: it follows the user across
+        // Spaces and full-screen apps, stays above normal windows, and does
+        // not pollute Cmd-` window cycling.
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary, .ignoresCycle]
+        panel.hidesOnDeactivate = false
         panel.delegate = self
 
         let model = StickyWindowModel(session: session, rootURL: rootURL, record: record, metadataStore: metadataStore)
@@ -168,7 +172,8 @@ final class StickyWindowCoordinator: NSObject, NSWindowDelegate {
         ))
         entries[path] = Entry(panel: panel, model: model)
         Self.apply(record: record, to: panel)
-        panel.makeKeyAndOrderFront(nil)
+        panel.orderFrontRegardless()
+        panel.makeKey()
         Task { await model.persistNow() }
     }
 
@@ -259,6 +264,7 @@ final class StickyWindowCoordinator: NSObject, NSWindowDelegate {
 
     private static func apply(record: StickyRecord, to panel: NSPanel?) {
         guard let panel else { return }
+        panel.isFloatingPanel = record.alwaysOnTop
         panel.level = record.alwaysOnTop ? .floating : .normal
         panel.alphaValue = min(1, max(0.35, record.appearance.opacity))
         panel.hasShadow = record.appearance.hasShadow
@@ -267,5 +273,8 @@ final class StickyWindowCoordinator: NSObject, NSWindowDelegate {
         panel.standardWindowButton(.closeButton)?.isHidden = hideButtons
         panel.standardWindowButton(.miniaturizeButton)?.isHidden = hideButtons
         panel.standardWindowButton(.zoomButton)?.isHidden = hideButtons
+        if record.alwaysOnTop {
+            panel.orderFrontRegardless()
+        }
     }
 }

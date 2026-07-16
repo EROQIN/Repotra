@@ -16,8 +16,10 @@ final class QuickCaptureCoordinator: NSObject, NSWindowDelegate {
         importImageData: @escaping @MainActor (Data) async -> String?
     ) {
         if let panel, panel.isVisible {
-            NSApp.activate(ignoringOtherApps: true)
-            panel.makeKeyAndOrderFront(nil)
+            // A non-activating panel can become key without making Repotra the
+            // active application. This keeps the app underneath untouched.
+            panel.orderFrontRegardless()
+            panel.makeKey()
             return
         }
 
@@ -25,7 +27,7 @@ final class QuickCaptureCoordinator: NSObject, NSWindowDelegate {
 
         let panel = QuickCapturePanel(
             contentRect: NSRect(x: 0, y: 0, width: 560, height: 420),
-            styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
+            styleMask: [.nonactivatingPanel, .titled, .closable, .resizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
@@ -35,9 +37,10 @@ final class QuickCaptureCoordinator: NSObject, NSWindowDelegate {
         panel.titlebarAppearsTransparent = true
         panel.isFloatingPanel = true
         panel.level = .floating
+        panel.hidesOnDeactivate = false
         panel.isReleasedWhenClosed = false
         panel.minSize = NSSize(width: 420, height: 300)
-        panel.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary, .ignoresCycle]
         panel.delegate = self
         panel.contentView = NSHostingView(rootView: QuickCaptureView(
             session: session,
@@ -49,8 +52,10 @@ final class QuickCaptureCoordinator: NSObject, NSWindowDelegate {
         panel.center()
         self.panel = panel
 
-        NSApp.activate(ignoringOtherApps: true)
-        panel.makeKeyAndOrderFront(nil)
+        // Keep the previously active app in front while allowing the panel to
+        // receive keyboard input immediately.
+        panel.orderFrontRegardless()
+        panel.makeKey()
     }
 
     func hide() {

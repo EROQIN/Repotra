@@ -25,7 +25,7 @@ struct RepotraApp: App {
                     .keyboardShortcut("n", modifiers: [.command, .shift])
             }
             CommandMenu("笔记") {
-                Button("钉到桌面 / 取消钉住") { Task { await model.togglePinnedSelectedNote() } }
+                Button("贴到桌面 / 取消贴图") { Task { await model.togglePinnedSelectedNote() } }
                     .keyboardShortcut("p", modifiers: [.command, .shift])
                 Button("立即保存") { Task { await model.selectedSession?.saveNow() } }
                     .keyboardShortcut("s", modifiers: [.command])

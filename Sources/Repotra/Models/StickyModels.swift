@@ -48,7 +48,9 @@ struct StickyRecord: Codable, Hashable, Sendable {
     var notePath: String
     var frame: CodableFrame = .defaultFrame
     var screenIdentifier: String?
-    var alwaysOnTop = false
+    /// A newly pasted sticky behaves like a screenshot pin and stays above
+    /// normal windows. Existing metadata keeps its explicit preference.
+    var alwaysOnTop = true
     var appearance: StickyAppearance = .standard
 }
 

@@ -204,7 +204,7 @@ private struct DocumentToolbarActions: View {
                 Button { Task { await model.togglePinnedSelectedNote() } } label: {
                     Image(systemName: model.stickyWindows.pinnedPaths.contains(path) ? "pin.fill" : "pin")
                 }
-                .help(model.stickyWindows.pinnedPaths.contains(path) ? "取消钉住" : "钉到桌面")
+                .help(model.stickyWindows.pinnedPaths.contains(path) ? "取消贴图" : "贴到桌面")
             }
 
             Menu {

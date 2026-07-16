@@ -107,7 +107,7 @@ struct LibrarySidebar: View {
                     Button("新建文件夹") { Task { await model.createFolder(in: node.relativePath) } }
                     Divider()
                 } else {
-                    Button(model.stickyWindows.pinnedPaths.contains(node.relativePath) ? "取消钉住" : "钉到桌面") {
+                    Button(model.stickyWindows.pinnedPaths.contains(node.relativePath) ? "取消贴图" : "贴到桌面") {
                         Task {
                             await model.select(path: node.relativePath)
                             await model.togglePinnedSelectedNote()

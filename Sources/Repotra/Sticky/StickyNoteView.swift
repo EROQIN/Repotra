@@ -41,7 +41,7 @@ struct StickyNoteView: View {
                         .help("便签外观")
 
                     Button { model.onClose?() } label: { Image(systemName: "xmark") }
-                        .help("取消钉住")
+                        .help("取消贴图")
                 }
                 .buttonStyle(.borderless)
                 .padding(8)
