@@ -15,7 +15,10 @@ final class QuickCaptureCoordinator: NSObject, NSWindowDelegate {
         importImageFile: @escaping @MainActor (URL) async -> String?,
         importImageData: @escaping @MainActor (Data) async -> String?
     ) {
-        if let panel, panel.isVisible {
+        if let panel {
+            if !panel.isVisible {
+                appendCaptureHeading(to: session)
+            }
             // A non-activating panel can become key without making Repotra the
             // active application. This keeps the app underneath untouched.
             panel.orderFrontRegardless()
