@@ -38,6 +38,7 @@ final class QuickCaptureCoordinator: NSObject, NSWindowDelegate {
         panel.isFloatingPanel = true
         panel.level = .floating
         panel.hidesOnDeactivate = false
+        panel.becomesKeyOnlyIfNeeded = false
         panel.isReleasedWhenClosed = false
         panel.minSize = NSSize(width: 420, height: 300)
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary, .ignoresCycle]

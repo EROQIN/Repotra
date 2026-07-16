@@ -266,6 +266,7 @@ final class StickyWindowCoordinator: NSObject, NSWindowDelegate {
         guard let panel else { return }
         panel.isFloatingPanel = record.alwaysOnTop
         panel.level = record.alwaysOnTop ? .floating : .normal
+        panel.hidesOnDeactivate = false
         panel.alphaValue = min(1, max(0.35, record.appearance.opacity))
         panel.hasShadow = record.appearance.hasShadow
         panel.isMovableByWindowBackground = record.appearance.hidesTitleBar
