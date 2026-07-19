@@ -23,15 +23,21 @@ struct PerformanceTests {
     }
 
     @MainActor
-    @Test("500 KB Markdown document renders within a bounded opening time")
-    func largeDocumentOpening() {
+    @Test("500 KB Markdown document updates without source rewriting")
+    func largeDocumentOpening() async throws {
+        let library = try TemporaryLibrary()
+        defer { library.remove() }
+        let store = LibraryStore(rootURL: library.url)
+        _ = try await store.bootstrap()
+        let path = try await store.createNote(in: nil, title: "Large")
+        let session = NoteSession(snapshot: try await store.readNote(at: path), store: store)
         let paragraph = "## Heading\n\nA paragraph with **bold**, *emphasis*, and [link](https://example.com).\n\n"
         let source = String(repeating: paragraph, count: 6000)
         #expect(source.utf8.count > 500_000)
         let start = CFAbsoluteTimeGetCurrent()
-        let rendered = MarkdownRenderEngine().render(source: source, activeLocation: 0, rootURL: nil)
+        session.updateContent(source)
         let elapsed = CFAbsoluteTimeGetCurrent() - start
-        #expect(rendered.segments.count > 5000)
-        #expect(elapsed < 3.0, "Initial render took \(elapsed) seconds")
+        #expect(session.content == source)
+        #expect(elapsed < 0.1, "Source update took \(elapsed) seconds")
     }
 }

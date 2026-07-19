@@ -8,9 +8,8 @@ options:
   xcodeVersion: "16.0"
 
 packages:
-  swift-markdown:
-    url: https://github.com/swiftlang/swift-markdown.git
-    from: 0.8.0
+  MarkdownEngine:
+    path: Vendor/MarkdownEngine
 
 settings:
   base:
@@ -25,15 +24,22 @@ targets:
     platform: macOS
     sources:
       - path: Sources/Repotra
+      - path: Resources/AppIcon.icns
+        buildPhase: resources
+      - path: Resources/RepotraSpotIcons.xcassets
+        buildPhase: resources
     dependencies:
-      - package: swift-markdown
-        product: Markdown
+      - package: MarkdownEngine
+        product: MarkdownEngine
+      - package: MarkdownEngine
+        product: MarkdownEngineCodeBlocks
     info:
       path: Config/Info.plist
       properties:
         CFBundleDisplayName: Repotra
         CFBundleName: Repotra
-        CFBundleShortVersionString: "0.1.0"
+        CFBundleIconFile: AppIcon
+        CFBundleShortVersionString: "1.0.0"
         CFBundleVersion: "1"
         LSApplicationCategoryType: public.app-category.productivity
         LSMinimumSystemVersion: "14.0"
@@ -50,6 +56,8 @@ targets:
     platform: macOS
     sources:
       - path: Tests/RepotraTests
+      - path: Sources/Repotra/Resources
+        buildPhase: resources
     dependencies:
       - target: Repotra
     settings:
@@ -62,6 +70,8 @@ targets:
     platform: macOS
     sources:
       - path: Tests/RepotraUITests
+      - path: Sources/Repotra/Resources
+        buildPhase: resources
     dependencies:
       - target: Repotra
     settings:

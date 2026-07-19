@@ -3,6 +3,7 @@ import SwiftUI
 
 struct StickyNoteView: View {
     @Bindable var model: StickyWindowModel
+    @Bindable var appAppearance: AppAppearanceController
     let importImageFile: @MainActor (URL) async -> String?
     let importImageData: @MainActor (Data) async -> String?
     @State private var isHovering = false
@@ -10,14 +11,18 @@ struct StickyNoteView: View {
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            stickyBackground
+            AppearanceBackgroundView(
+                presentation: .sticky(model.record.appearance.background, rootURL: model.rootURL)
+            )
             MarkdownEditorView(
                 session: model.session,
                 rootURL: model.rootURL,
+                context: .sticky,
                 renderOptions: MarkdownRenderOptions(
                     fontFamily: model.record.appearance.fontFamily,
                     fontSize: model.record.appearance.fontSize,
-                    textColor: PathUtilities.hexColor(model.record.appearance.textColor)
+                    textColor: PathUtilities.hexColor(model.record.appearance.textColor),
+                    accentColor: appAppearance.preferences.accent.nsColor
                 ),
                 importImageFile: importImageFile,
                 importImageData: importImageData
@@ -40,9 +45,9 @@ struct StickyNoteView: View {
                         .help("便签外观")
 
                     Button { model.onClose?() } label: { Image(systemName: "xmark") }
-                        .help("取消钉住")
+                        .help("取消贴图")
                 }
-                .buttonStyle(.borderless)
+                .buttonStyle(RepotraHoverButtonStyle())
                 .padding(8)
                 .background(.ultraThinMaterial, in: Capsule())
                 .padding(10)
@@ -62,43 +67,10 @@ struct StickyNoteView: View {
             y: 8
         )
         .onHover { isHovering = $0 }
+        .preferredColorScheme(appAppearance.preferences.interfaceTheme.colorScheme)
+        .tint(appAppearance.preferences.accent.color)
     }
 
-    @ViewBuilder
-    private var stickyBackground: some View {
-        let background = model.record.appearance.background
-        switch background.kind {
-        case .solid:
-            PathUtilities.swiftUIColor(background.primaryColor)
-        case .gradient:
-            LinearGradient(
-                colors: [
-                    PathUtilities.swiftUIColor(background.primaryColor),
-                    PathUtilities.swiftUIColor(background.secondaryColor),
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        case .image:
-            if let path = background.imagePath,
-               let image = NSImage(contentsOf: model.rootURL.appending(path: path))
-            {
-                switch background.imageScaling {
-                case .fill:
-                    Image(nsImage: image).resizable().scaledToFill().clipped()
-                case .fit:
-                    ZStack {
-                        PathUtilities.swiftUIColor(background.primaryColor)
-                        Image(nsImage: image).resizable().scaledToFit()
-                    }
-                case .stretch:
-                    Image(nsImage: image).resizable()
-                }
-            } else {
-                PathUtilities.swiftUIColor(background.primaryColor)
-            }
-        }
-    }
 }
 
 private struct StickyAppearanceEditor: View {

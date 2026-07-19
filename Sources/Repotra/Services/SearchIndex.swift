@@ -6,6 +6,8 @@ actor SearchIndex {
         let title: String
         let content: String
         let searchable: String
+        let modifiedAt: Date
+        let characterCount: Int
     }
 
     private var entries: [Entry] = []
@@ -15,7 +17,7 @@ actor SearchIndex {
         let resolvedRoot = rootURL.standardizedFileURL.resolvingSymlinksInPath()
         guard let enumerator = fileManager.enumerator(
             at: resolvedRoot,
-            includingPropertiesForKeys: [.isRegularFileKey, .isHiddenKey],
+            includingPropertiesForKeys: [.isRegularFileKey, .isHiddenKey, .contentModificationDateKey],
             options: [.skipsHiddenFiles, .skipsPackageDescendants]
         ) else {
             entries = []
@@ -36,10 +38,22 @@ actor SearchIndex {
                 relativePath: relativePath,
                 title: title,
                 content: content,
-                searchable: "\(title)\n\(relativePath)\n\(content)".localizedLowercase
+                searchable: "\(title)\n\(relativePath)\n\(content)".localizedLowercase,
+                modifiedAt: (try? url.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast,
+                characterCount: content.count
             ))
         }
         entries = next
+    }
+
+    func metrics() -> [String: NoteMetrics] {
+        Dictionary(uniqueKeysWithValues: entries.map { entry in
+            (entry.relativePath, NoteMetrics(
+                relativePath: entry.relativePath,
+                modifiedAt: entry.modifiedAt,
+                characterCount: entry.characterCount
+            ))
+        })
     }
 
     func query(_ query: String, limit: Int = 100) -> [SearchResult] {

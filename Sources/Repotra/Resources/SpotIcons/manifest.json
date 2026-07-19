@@ -1,0 +1,15 @@
+{
+  "style": "graphite-warm-paper-cyan-violet",
+  "version": 1,
+  "icons": [
+    "choose-library",
+    "empty-note",
+    "no-search-results",
+    "quick-note",
+    "desktop-sticky",
+    "local-security",
+    "file-conflict",
+    "image-import",
+    "ready"
+  ]
+}

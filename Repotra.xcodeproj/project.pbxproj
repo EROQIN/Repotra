@@ -7,34 +7,83 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		030C99D2D37813436C1AF78C /* local-security.png in Resources */ = {isa = PBXBuildFile; fileRef = 23B3337199F62955E48F028B /* local-security.png */; };
+		058C758AD17B9CF7B4E4AB01 /* choose-library.png in Resources */ = {isa = PBXBuildFile; fileRef = 042782B475B0AC8328171AC2 /* choose-library.png */; };
+		08EC53E7B0A73008AC4F4C83 /* HoverFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1CB46A9E03456CBAA9C780 /* HoverFeedback.swift */; };
+		0B3ADEF2DAA772F4A8520DF1 /* AppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF236F88ACB5A9C6D24D9F99 /* AppModelTests.swift */; };
 		12DE25B7E773E93528FEE50B /* StickyNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161CBEF2796E42E4D5972CC3 /* StickyNoteView.swift */; };
 		134631219BD2E8AAD099C0B5 /* RepotraUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ABD7E0EDC4FA7FD64254B3B /* RepotraUITests.swift */; };
 		15521330FC39C484CF8344F3 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F60B5AC22C2B9AEB65D85AE /* AppModel.swift */; };
-		1BFB6DF462C9CF8E7ACB862F /* MarkdownRenderEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7F94363222C9FFB8E27E58 /* MarkdownRenderEngine.swift */; };
+		1E1788B446FC462EFC5736A4 /* AppAppearanceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75EDF3AC5AE21612776114C2 /* AppAppearanceStore.swift */; };
 		1F6C160BBB8B191709AAFD14 /* MarkdownEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD89B8894D582A0F3DC532A8 /* MarkdownEditorView.swift */; };
+		202920A49023987EBADE8282 /* file-conflict.png in Resources */ = {isa = PBXBuildFile; fileRef = 4DA7C329138D91F6DEBD1CB9 /* file-conflict.png */; };
 		246D019CED4620D102188DD5 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAB6FD3B88D910CCE1D21E2 /* PerformanceTests.swift */; };
+		2A4EFF535136FFC3A54F9B44 /* GlobalHotKeyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2CE8DA7199C1BDC3C5577E /* GlobalHotKeyController.swift */; };
+		2D50E67A97ADE2D2EA771AAF /* local-security.png in Resources */ = {isa = PBXBuildFile; fileRef = 23B3337199F62955E48F028B /* local-security.png */; };
+		2E6FA240B3AA02446920F611 /* image-import.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E35BBB90A932A91979A1F31 /* image-import.png */; };
 		3142FB03157255405D3B8C69 /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EF9E7D5EAE116F2314CCFC /* SmokeTests.swift */; };
 		3590F25EFFB77092B4F8A56E /* LibraryLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAC5A379EE643AFBCE17CED /* LibraryLocationPicker.swift */; };
+		35DD4D1651349334534ADB9C /* ready.png in Resources */ = {isa = PBXBuildFile; fileRef = 8CD199914A330FF82C8D8E14 /* ready.png */; };
+		3AB06C5E5112C1E84EB600A2 /* ready.png in Resources */ = {isa = PBXBuildFile; fileRef = 8CD199914A330FF82C8D8E14 /* ready.png */; };
 		3D0091C45D5E8E6CF29C71A2 /* NoteSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67CD373BCEA7EB701C2F896 /* NoteSession.swift */; };
+		3DBBE09FC9A343E26A2C3A9F /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 44D613F7B6FA86C7646E17AC /* manifest.json */; };
+		42BF9DE8DC903DF025C33D29 /* no-search-results.png in Resources */ = {isa = PBXBuildFile; fileRef = B4BC91697D4D1A50251D14E7 /* no-search-results.png */; };
+		44A9C38AA790DBAE83A69635 /* local-security.png in Resources */ = {isa = PBXBuildFile; fileRef = 23B3337199F62955E48F028B /* local-security.png */; };
+		46758437C0275CABC3FDA7FB /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2B98C31D454C4610D9FF3994 /* AppIcon.icns */; };
 		4894291EAE1CE28E3A4502D9 /* SearchIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCE30BC3AD51D73AB87D5CC4 /* SearchIndex.swift */; };
 		48B07A88D94F3CC91DD3ED0B /* PathUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3D9A299DB44D928639556A /* PathUtilities.swift */; };
+		4C856B0D837FA8FE831DF2C1 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C9C5DC7106B569E5EDFD42 /* AppAppearance.swift */; };
 		4DB2749A975B16BD5579BE64 /* RepotraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6A0372661EFC356134D12A /* RepotraApp.swift */; };
+		4E3DEDFBA3297D4210C9254B /* empty-note.png in Resources */ = {isa = PBXBuildFile; fileRef = C9D1D75DFF3FC8BDF1F607C0 /* empty-note.png */; };
+		541AF1D29C4F25EE78B7057D /* RepotraSpotIcons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 547AD6A3D8C944480039401A /* RepotraSpotIcons.xcassets */; };
+		56A01B66E8E9F97E205FEFC9 /* file-conflict.png in Resources */ = {isa = PBXBuildFile; fileRef = 4DA7C329138D91F6DEBD1CB9 /* file-conflict.png */; };
+		65FA03627FBB9C2A98507D19 /* SidebarKeyboardNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76F85F78A64C5C1A4E7D794 /* SidebarKeyboardNavigationTests.swift */; };
+		66D6B75DE2D87ABDF72730D2 /* QuickCaptureCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1A2FDED5DE9386813737D4 /* QuickCaptureCoordinator.swift */; };
 		6B34D99721329C9E091FC163 /* NoteSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BD5BC46485F1AAB63E20335 /* NoteSessionTests.swift */; };
 		6BB4550A6BC70B3FE563F4E3 /* NoteModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB52F2F5FDB5116A2DAD0C0 /* NoteModels.swift */; };
+		6D1DFCA4D0E5CA76D350626C /* no-search-results.png in Resources */ = {isa = PBXBuildFile; fileRef = B4BC91697D4D1A50251D14E7 /* no-search-results.png */; };
 		6FABE677E5D48465C8995F5F /* LibraryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C317D06B494F22991CCD9A /* LibraryStoreTests.swift */; };
+		7032B3C506BB31965CD05550 /* quick-note.png in Resources */ = {isa = PBXBuildFile; fileRef = 90FA61B29CBD7BF5606B3FA0 /* quick-note.png */; };
 		715D66AC3240D4B3AEBA1B92 /* LibraryPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B291D857C5C373701892DD5 /* LibraryPickerButton.swift */; };
+		75A513DA48D873C4D5818FC8 /* quick-note.png in Resources */ = {isa = PBXBuildFile; fileRef = 90FA61B29CBD7BF5606B3FA0 /* quick-note.png */; };
+		786E70332BA23FBC217E3AEF /* AppAppearanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D74F070B35EFBFF9E3DD1A /* AppAppearanceTests.swift */; };
+		7BBD3089B366583D5E05A2E4 /* QuickNoteAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D4C3C4D4FF5A746A7A2B9 /* QuickNoteAppearance.swift */; };
+		8175B64DD05E417A52EAA243 /* quick-note.png in Resources */ = {isa = PBXBuildFile; fileRef = 90FA61B29CBD7BF5606B3FA0 /* quick-note.png */; };
+		825BDA45BE0F133C94FEAB6A /* QuickNoteAppearanceEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564C351AF471C71BE2AD1FCF /* QuickNoteAppearanceEditor.swift */; };
+		826B67EFF2C75AFDE6146F80 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 44D613F7B6FA86C7646E17AC /* manifest.json */; };
+		82BE5A7D6FFEF6BCF108119C /* no-search-results.png in Resources */ = {isa = PBXBuildFile; fileRef = B4BC91697D4D1A50251D14E7 /* no-search-results.png */; };
+		88A1C14087114475C50C372E /* desktop-sticky.png in Resources */ = {isa = PBXBuildFile; fileRef = 809BC096EEC9F1FCC931073F /* desktop-sticky.png */; };
+		89D047689AC1F5E702B23A92 /* image-import.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E35BBB90A932A91979A1F31 /* image-import.png */; };
 		9453ED29D73E054A2627512B /* LibrarySidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686369145CA49CF2D15E1DF4 /* LibrarySidebar.swift */; };
+		9ED43E17FCF14E7EEA17238C /* SidebarKeyInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03287CCEEFEE10BA35EF8C9 /* SidebarKeyInputView.swift */; };
 		A01A98585D47577FBB8F9507 /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E219C29462AFA57A28B27E /* TestSupport.swift */; };
+		A4D4CA2A2CDB097383EA627D /* NoteRenameConflictDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A60055FB8FF9974D04F9A1 /* NoteRenameConflictDialog.swift */; };
+		A53B394B837715D06C3234A1 /* desktop-sticky.png in Resources */ = {isa = PBXBuildFile; fileRef = 809BC096EEC9F1FCC931073F /* desktop-sticky.png */; };
+		A556FF9F0CC54487BB4023BC /* desktop-sticky.png in Resources */ = {isa = PBXBuildFile; fileRef = 809BC096EEC9F1FCC931073F /* desktop-sticky.png */; };
 		A57D843B2E6C1C747ED760DB /* StickyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6338FF9F1C3A542900650BB2 /* StickyModels.swift */; };
 		AA2FED8952258137174AA74E /* MetadataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9067EF8145E54D0B653D7D /* MetadataStore.swift */; };
-		B17191500F59F3C8A6CAE8BE /* MarkdownRenderEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DF6F982064DFA75F30E63D /* MarkdownRenderEngineTests.swift */; };
-		B44FF929A8CFC7F3E2D52A87 /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = 93E31CE5EB41110567168515 /* Markdown */; };
+		AA31CCF77288FDF53F1CBE2F /* MarkdownEditorIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D35E97A7EB30CBAD0D127FF /* MarkdownEditorIntegrationTests.swift */; };
+		B3B38587701CAF6C7871FD64 /* choose-library.png in Resources */ = {isa = PBXBuildFile; fileRef = 042782B475B0AC8328171AC2 /* choose-library.png */; };
+		B44FF929A8CFC7F3E2D52A87 /* MarkdownEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 1B66576A34359525749496E6 /* MarkdownEngine */; };
 		B566DAB546E6E1F57E275743 /* StickyWindowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBD07453CB59CAB225A7309 /* StickyWindowCoordinator.swift */; };
+		B9DF4C117B6884D119992CBF /* BrandSpotImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111D8D2F9AD71841CB9FF7FF /* BrandSpotImage.swift */; };
+		BD0A163A1BF5B61AFE8E96BA /* empty-note.png in Resources */ = {isa = PBXBuildFile; fileRef = C9D1D75DFF3FC8BDF1F607C0 /* empty-note.png */; };
 		BDD4B391E0A97A9ADB0E3E92 /* SearchIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B7022EA8EF658D517508D20 /* SearchIndexTests.swift */; };
+		C1E673E0BCB593D6B4C4B49C /* QuickNoteAppearanceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E7B6C505358D6BCF440FB4 /* QuickNoteAppearanceStore.swift */; };
 		C25FE04C2BD6EF025D794D5F /* LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13B2B687115CFA51EB22776 /* LibraryStore.swift */; };
+		C768B6DE7D1174E1D521E95C /* image-import.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E35BBB90A932A91979A1F31 /* image-import.png */; };
+		CC0CFD9461087C5285961DC0 /* file-conflict.png in Resources */ = {isa = PBXBuildFile; fileRef = 4DA7C329138D91F6DEBD1CB9 /* file-conflict.png */; };
+		D24372951C410A11B17816B9 /* QuickNoteAppearanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730CC7817CFB6F16FA2416EA /* QuickNoteAppearanceTests.swift */; };
+		D8A28F2E57B22C9E6C172200 /* empty-note.png in Resources */ = {isa = PBXBuildFile; fileRef = C9D1D75DFF3FC8BDF1F607C0 /* empty-note.png */; };
 		E36C54012CAC3A7CE35793BA /* MetadataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48068E8BCBE6F579C705BCC0 /* MetadataStoreTests.swift */; };
 		E70BA862C51FD56BEE12B4A2 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD604AC92B52E292C21FECC9 /* DirectoryWatcher.swift */; };
 		E7577A542132EA96DA2C3581 /* MainWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E350912BA71EAC94286609B /* MainWindowView.swift */; };
+		F1977E968F17E5C9A2836539 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 44D613F7B6FA86C7646E17AC /* manifest.json */; };
+		F2968D7E225ED23EB643D235 /* AppearanceBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6BDBEE8B825920926A0F2C /* AppearanceBackgroundView.swift */; };
+		F543278011C7F79B82B7D7E1 /* MarkdownEngineCodeBlocks in Frameworks */ = {isa = PBXBuildFile; productRef = 971A484B4ACDAB24706D27B0 /* MarkdownEngineCodeBlocks */; };
+		F773DFA339869929E811E403 /* ready.png in Resources */ = {isa = PBXBuildFile; fileRef = 8CD199914A330FF82C8D8E14 /* ready.png */; };
+		FE8B54E154CA981AB755D96B /* choose-library.png in Resources */ = {isa = PBXBuildFile; fileRef = 042782B475B0AC8328171AC2 /* choose-library.png */; };
+		FF02312F72D247617BA6567F /* SidebarKeyboardNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47628916F7A19B2D31067FC9 /* SidebarKeyboardNavigation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,33 +105,62 @@
 
 /* Begin PBXFileReference section */
 		02EF9E7D5EAE116F2314CCFC /* SmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
+		042782B475B0AC8328171AC2 /* choose-library.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "choose-library.png"; sourceTree = "<group>"; };
+		04A60055FB8FF9974D04F9A1 /* NoteRenameConflictDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteRenameConflictDialog.swift; sourceTree = "<group>"; };
 		09C317D06B494F22991CCD9A /* LibraryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStoreTests.swift; sourceTree = "<group>"; };
+		111D8D2F9AD71841CB9FF7FF /* BrandSpotImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandSpotImage.swift; sourceTree = "<group>"; };
 		161CBEF2796E42E4D5972CC3 /* StickyNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyNoteView.swift; sourceTree = "<group>"; };
+		23B3337199F62955E48F028B /* local-security.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "local-security.png"; sourceTree = "<group>"; };
+		2A2CE8DA7199C1BDC3C5577E /* GlobalHotKeyController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotKeyController.swift; sourceTree = "<group>"; };
 		2A6A0372661EFC356134D12A /* RepotraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepotraApp.swift; sourceTree = "<group>"; };
+		2B98C31D454C4610D9FF3994 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
+		2D35E97A7EB30CBAD0D127FF /* MarkdownEditorIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownEditorIntegrationTests.swift; sourceTree = "<group>"; };
+		44D613F7B6FA86C7646E17AC /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = manifest.json; sourceTree = "<group>"; };
+		47628916F7A19B2D31067FC9 /* SidebarKeyboardNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarKeyboardNavigation.swift; sourceTree = "<group>"; };
 		48068E8BCBE6F579C705BCC0 /* MetadataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataStoreTests.swift; sourceTree = "<group>"; };
 		4B291D857C5C373701892DD5 /* LibraryPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryPickerButton.swift; sourceTree = "<group>"; };
 		4C9067EF8145E54D0B653D7D /* MetadataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataStore.swift; sourceTree = "<group>"; };
+		4DA7C329138D91F6DEBD1CB9 /* file-conflict.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "file-conflict.png"; sourceTree = "<group>"; };
 		4E350912BA71EAC94286609B /* MainWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowView.swift; sourceTree = "<group>"; };
 		4F819F8C71B48CC928A929EA /* RepotraUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RepotraUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		50D74F070B35EFBFF9E3DD1A /* AppAppearanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAppearanceTests.swift; sourceTree = "<group>"; };
+		547AD6A3D8C944480039401A /* RepotraSpotIcons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = RepotraSpotIcons.xcassets; sourceTree = "<group>"; };
+		564C351AF471C71BE2AD1FCF /* QuickNoteAppearanceEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickNoteAppearanceEditor.swift; sourceTree = "<group>"; };
+		595D4C3C4D4FF5A746A7A2B9 /* QuickNoteAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickNoteAppearance.swift; sourceTree = "<group>"; };
 		5ABD7E0EDC4FA7FD64254B3B /* RepotraUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepotraUITests.swift; sourceTree = "<group>"; };
 		5BBD07453CB59CAB225A7309 /* StickyWindowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyWindowCoordinator.swift; sourceTree = "<group>"; };
-		61DF6F982064DFA75F30E63D /* MarkdownRenderEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRenderEngineTests.swift; sourceTree = "<group>"; };
+		5E35BBB90A932A91979A1F31 /* image-import.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "image-import.png"; sourceTree = "<group>"; };
 		6338FF9F1C3A542900650BB2 /* StickyModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyModels.swift; sourceTree = "<group>"; };
+		64C9C5DC7106B569E5EDFD42 /* AppAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAppearance.swift; sourceTree = "<group>"; };
 		686369145CA49CF2D15E1DF4 /* LibrarySidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySidebar.swift; sourceTree = "<group>"; };
 		6B7022EA8EF658D517508D20 /* SearchIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchIndexTests.swift; sourceTree = "<group>"; };
 		6BD5BC46485F1AAB63E20335 /* NoteSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteSessionTests.swift; sourceTree = "<group>"; };
+		6D6BDBEE8B825920926A0F2C /* AppearanceBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceBackgroundView.swift; sourceTree = "<group>"; };
 		7179BE8241A3A30271142CD7 /* RepotraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RepotraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		730CC7817CFB6F16FA2416EA /* QuickNoteAppearanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickNoteAppearanceTests.swift; sourceTree = "<group>"; };
 		74E219C29462AFA57A28B27E /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
+		75EDF3AC5AE21612776114C2 /* AppAppearanceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAppearanceStore.swift; sourceTree = "<group>"; };
 		7DAC5A379EE643AFBCE17CED /* LibraryLocationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryLocationPicker.swift; sourceTree = "<group>"; };
+		809BC096EEC9F1FCC931073F /* desktop-sticky.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "desktop-sticky.png"; sourceTree = "<group>"; };
+		88E7B6C505358D6BCF440FB4 /* QuickNoteAppearanceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickNoteAppearanceStore.swift; sourceTree = "<group>"; };
+		8CD199914A330FF82C8D8E14 /* ready.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ready.png; sourceTree = "<group>"; };
+		90FA61B29CBD7BF5606B3FA0 /* quick-note.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "quick-note.png"; sourceTree = "<group>"; };
+		9E1CB46A9E03456CBAA9C780 /* HoverFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverFeedback.swift; sourceTree = "<group>"; };
 		9F60B5AC22C2B9AEB65D85AE /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		B118CF169BBEEA8422E4C82D /* Repotra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Repotra.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B13B2B687115CFA51EB22776 /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStore.swift; sourceTree = "<group>"; };
+		B4BC91697D4D1A50251D14E7 /* no-search-results.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "no-search-results.png"; sourceTree = "<group>"; };
+		B76F85F78A64C5C1A4E7D794 /* SidebarKeyboardNavigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarKeyboardNavigationTests.swift; sourceTree = "<group>"; };
+		BE1A2FDED5DE9386813737D4 /* QuickCaptureCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCaptureCoordinator.swift; sourceTree = "<group>"; };
 		BFB52F2F5FDB5116A2DAD0C0 /* NoteModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModels.swift; sourceTree = "<group>"; };
-		CD7F94363222C9FFB8E27E58 /* MarkdownRenderEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRenderEngine.swift; sourceTree = "<group>"; };
+		C9D1D75DFF3FC8BDF1F607C0 /* empty-note.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "empty-note.png"; sourceTree = "<group>"; };
+		CE6151D7EBF47193715376D3 /* MarkdownEngine */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MarkdownEngine; path = Vendor/MarkdownEngine; sourceTree = SOURCE_ROOT; };
+		D03287CCEEFEE10BA35EF8C9 /* SidebarKeyInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarKeyInputView.swift; sourceTree = "<group>"; };
 		DD604AC92B52E292C21FECC9 /* DirectoryWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
 		DF3D9A299DB44D928639556A /* PathUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathUtilities.swift; sourceTree = "<group>"; };
 		E67CD373BCEA7EB701C2F896 /* NoteSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteSession.swift; sourceTree = "<group>"; };
 		ECAB6FD3B88D910CCE1D21E2 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
+		EF236F88ACB5A9C6D24D9F99 /* AppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelTests.swift; sourceTree = "<group>"; };
 		FCE30BC3AD51D73AB87D5CC4 /* SearchIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchIndex.swift; sourceTree = "<group>"; };
 		FD89B8894D582A0F3DC532A8 /* MarkdownEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownEditorView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -92,19 +170,39 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B44FF929A8CFC7F3E2D52A87 /* Markdown in Frameworks */,
+				B44FF929A8CFC7F3E2D52A87 /* MarkdownEngine in Frameworks */,
+				F543278011C7F79B82B7D7E1 /* MarkdownEngineCodeBlocks in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		005E2427C9C5753706DD6878 /* SpotIcons */ = {
+			isa = PBXGroup;
+			children = (
+				042782B475B0AC8328171AC2 /* choose-library.png */,
+				809BC096EEC9F1FCC931073F /* desktop-sticky.png */,
+				C9D1D75DFF3FC8BDF1F607C0 /* empty-note.png */,
+				4DA7C329138D91F6DEBD1CB9 /* file-conflict.png */,
+				5E35BBB90A932A91979A1F31 /* image-import.png */,
+				23B3337199F62955E48F028B /* local-security.png */,
+				44D613F7B6FA86C7646E17AC /* manifest.json */,
+				B4BC91697D4D1A50251D14E7 /* no-search-results.png */,
+				90FA61B29CBD7BF5606B3FA0 /* quick-note.png */,
+				8CD199914A330FF82C8D8E14 /* ready.png */,
+			);
+			path = SpotIcons;
+			sourceTree = "<group>";
+		};
 		05FB10A18CB4914C3DB3940A /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				75EDF3AC5AE21612776114C2 /* AppAppearanceStore.swift */,
 				DD604AC92B52E292C21FECC9 /* DirectoryWatcher.swift */,
 				B13B2B687115CFA51EB22776 /* LibraryStore.swift */,
 				4C9067EF8145E54D0B653D7D /* MetadataStore.swift */,
+				88E7B6C505358D6BCF440FB4 /* QuickNoteAppearanceStore.swift */,
 				FCE30BC3AD51D73AB87D5CC4 /* SearchIndex.swift */,
 			);
 			path = Services;
@@ -124,12 +222,21 @@
 				51CD38D1FC66E7AE7EA5F1DC /* App */,
 				AD774295614580217B8E3007 /* Editor */,
 				86275CE49A1BC32C8997ED21 /* Models */,
+				44AB0D484DDB71C16F33D47E /* Resources */,
 				05FB10A18CB4914C3DB3940A /* Services */,
 				B62F5EAB5B5CDAF2F966C369 /* Sticky */,
 				3DA85CCD79F04EFE5ECC84E7 /* UI */,
 				061FAABECA5F6BAE9DCA1A9B /* Utilities */,
 			);
 			path = Repotra;
+			sourceTree = "<group>";
+		};
+		0948D257D55F14EF3C1E5FBF /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				CE6151D7EBF47193715376D3 /* MarkdownEngine */,
+			);
+			name = Packages;
 			sourceTree = "<group>";
 		};
 		289265DCADF5F99286578E95 /* Tests */ = {
@@ -152,10 +259,17 @@
 		3DA85CCD79F04EFE5ECC84E7 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				6D6BDBEE8B825920926A0F2C /* AppearanceBackgroundView.swift */,
+				111D8D2F9AD71841CB9FF7FF /* BrandSpotImage.swift */,
+				9E1CB46A9E03456CBAA9C780 /* HoverFeedback.swift */,
 				7DAC5A379EE643AFBCE17CED /* LibraryLocationPicker.swift */,
 				4B291D857C5C373701892DD5 /* LibraryPickerButton.swift */,
 				686369145CA49CF2D15E1DF4 /* LibrarySidebar.swift */,
 				4E350912BA71EAC94286609B /* MainWindowView.swift */,
+				04A60055FB8FF9974D04F9A1 /* NoteRenameConflictDialog.swift */,
+				564C351AF471C71BE2AD1FCF /* QuickNoteAppearanceEditor.swift */,
+				47628916F7A19B2D31067FC9 /* SidebarKeyboardNavigation.swift */,
+				D03287CCEEFEE10BA35EF8C9 /* SidebarKeyInputView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -168,10 +282,20 @@
 			path = RepotraUITests;
 			sourceTree = "<group>";
 		};
+		44AB0D484DDB71C16F33D47E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				005E2427C9C5753706DD6878 /* SpotIcons */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		51CD38D1FC66E7AE7EA5F1DC /* App */ = {
 			isa = PBXGroup;
 			children = (
 				9F60B5AC22C2B9AEB65D85AE /* AppModel.swift */,
+				2A2CE8DA7199C1BDC3C5577E /* GlobalHotKeyController.swift */,
+				BE1A2FDED5DE9386813737D4 /* QuickCaptureCoordinator.swift */,
 				2A6A0372661EFC356134D12A /* RepotraApp.swift */,
 			);
 			path = App;
@@ -180,18 +304,28 @@
 		86275CE49A1BC32C8997ED21 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				64C9C5DC7106B569E5EDFD42 /* AppAppearance.swift */,
 				BFB52F2F5FDB5116A2DAD0C0 /* NoteModels.swift */,
 				E67CD373BCEA7EB701C2F896 /* NoteSession.swift */,
+				595D4C3C4D4FF5A746A7A2B9 /* QuickNoteAppearance.swift */,
 				6338FF9F1C3A542900650BB2 /* StickyModels.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		978B083E7738D5092F137358 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				2B98C31D454C4610D9FF3994 /* AppIcon.icns */,
+				547AD6A3D8C944480039401A /* RepotraSpotIcons.xcassets */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		AD774295614580217B8E3007 /* Editor */ = {
 			isa = PBXGroup;
 			children = (
 				FD89B8894D582A0F3DC532A8 /* MarkdownEditorView.swift */,
-				CD7F94363222C9FFB8E27E58 /* MarkdownRenderEngine.swift */,
 			);
 			path = Editor;
 			sourceTree = "<group>";
@@ -218,12 +352,16 @@
 		E06A937D86EAEF9EA0F63CB4 /* RepotraTests */ = {
 			isa = PBXGroup;
 			children = (
+				50D74F070B35EFBFF9E3DD1A /* AppAppearanceTests.swift */,
+				EF236F88ACB5A9C6D24D9F99 /* AppModelTests.swift */,
 				09C317D06B494F22991CCD9A /* LibraryStoreTests.swift */,
-				61DF6F982064DFA75F30E63D /* MarkdownRenderEngineTests.swift */,
+				2D35E97A7EB30CBAD0D127FF /* MarkdownEditorIntegrationTests.swift */,
 				48068E8BCBE6F579C705BCC0 /* MetadataStoreTests.swift */,
 				6BD5BC46485F1AAB63E20335 /* NoteSessionTests.swift */,
 				ECAB6FD3B88D910CCE1D21E2 /* PerformanceTests.swift */,
+				730CC7817CFB6F16FA2416EA /* QuickNoteAppearanceTests.swift */,
 				6B7022EA8EF658D517508D20 /* SearchIndexTests.swift */,
+				B76F85F78A64C5C1A4E7D794 /* SidebarKeyboardNavigationTests.swift */,
 				02EF9E7D5EAE116F2314CCFC /* SmokeTests.swift */,
 				74E219C29462AFA57A28B27E /* TestSupport.swift */,
 			);
@@ -233,6 +371,8 @@
 		FD78DE7A220EE1B0B8B5865A = {
 			isa = PBXGroup;
 			children = (
+				0948D257D55F14EF3C1E5FBF /* Packages */,
+				978B083E7738D5092F137358 /* Resources */,
 				2E69B7CADD1D58FE291862A1 /* Sources */,
 				289265DCADF5F99286578E95 /* Tests */,
 				CDAA8DA07C5225D510A6375C /* Products */,
@@ -247,6 +387,7 @@
 			buildConfigurationList = CE3D0A388FA766E216020B08 /* Build configuration list for PBXNativeTarget "Repotra" */;
 			buildPhases = (
 				A576D8CD1859621E623A8F9B /* Sources */,
+				73DFB68610212FB49E79AF58 /* Resources */,
 				F2904BE485B0628E21470DC8 /* Frameworks */,
 			);
 			buildRules = (
@@ -255,7 +396,8 @@
 			);
 			name = Repotra;
 			packageProductDependencies = (
-				93E31CE5EB41110567168515 /* Markdown */,
+				1B66576A34359525749496E6 /* MarkdownEngine */,
+				971A484B4ACDAB24706D27B0 /* MarkdownEngineCodeBlocks */,
 			);
 			productName = Repotra;
 			productReference = B118CF169BBEEA8422E4C82D /* Repotra.app */;
@@ -266,6 +408,7 @@
 			buildConfigurationList = FAA3C3AB7EA7E368856AFBA6 /* Build configuration list for PBXNativeTarget "RepotraTests" */;
 			buildPhases = (
 				714D6C92306E99379DC52B7D /* Sources */,
+				B79012F658BF5FCE69014F30 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -284,6 +427,7 @@
 			buildConfigurationList = 017FB37037F324268FFDC36F /* Build configuration list for PBXNativeTarget "RepotraUITests" */;
 			buildPhases = (
 				FC9CCFA80BA40379DB1F0A94 /* Sources */,
+				72D262C42AD3ADDE8D066E20 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -321,7 +465,7 @@
 			mainGroup = FD78DE7A220EE1B0B8B5865A;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				4004461D8824D6254078C5A1 /* XCRemoteSwiftPackageReference "swift-markdown" */,
+				453D1D6A53357EF4F42EB9B2 /* XCLocalSwiftPackageReference "Vendor/MarkdownEngine" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CDAA8DA07C5225D510A6375C /* Products */;
@@ -335,17 +479,77 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		72D262C42AD3ADDE8D066E20 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FE8B54E154CA981AB755D96B /* choose-library.png in Resources */,
+				A53B394B837715D06C3234A1 /* desktop-sticky.png in Resources */,
+				D8A28F2E57B22C9E6C172200 /* empty-note.png in Resources */,
+				202920A49023987EBADE8282 /* file-conflict.png in Resources */,
+				C768B6DE7D1174E1D521E95C /* image-import.png in Resources */,
+				030C99D2D37813436C1AF78C /* local-security.png in Resources */,
+				F1977E968F17E5C9A2836539 /* manifest.json in Resources */,
+				82BE5A7D6FFEF6BCF108119C /* no-search-results.png in Resources */,
+				8175B64DD05E417A52EAA243 /* quick-note.png in Resources */,
+				F773DFA339869929E811E403 /* ready.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		73DFB68610212FB49E79AF58 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				46758437C0275CABC3FDA7FB /* AppIcon.icns in Resources */,
+				541AF1D29C4F25EE78B7057D /* RepotraSpotIcons.xcassets in Resources */,
+				B3B38587701CAF6C7871FD64 /* choose-library.png in Resources */,
+				88A1C14087114475C50C372E /* desktop-sticky.png in Resources */,
+				BD0A163A1BF5B61AFE8E96BA /* empty-note.png in Resources */,
+				56A01B66E8E9F97E205FEFC9 /* file-conflict.png in Resources */,
+				2E6FA240B3AA02446920F611 /* image-import.png in Resources */,
+				44A9C38AA790DBAE83A69635 /* local-security.png in Resources */,
+				826B67EFF2C75AFDE6146F80 /* manifest.json in Resources */,
+				6D1DFCA4D0E5CA76D350626C /* no-search-results.png in Resources */,
+				75A513DA48D873C4D5818FC8 /* quick-note.png in Resources */,
+				3AB06C5E5112C1E84EB600A2 /* ready.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B79012F658BF5FCE69014F30 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				058C758AD17B9CF7B4E4AB01 /* choose-library.png in Resources */,
+				A556FF9F0CC54487BB4023BC /* desktop-sticky.png in Resources */,
+				4E3DEDFBA3297D4210C9254B /* empty-note.png in Resources */,
+				CC0CFD9461087C5285961DC0 /* file-conflict.png in Resources */,
+				89D047689AC1F5E702B23A92 /* image-import.png in Resources */,
+				2D50E67A97ADE2D2EA771AAF /* local-security.png in Resources */,
+				3DBBE09FC9A343E26A2C3A9F /* manifest.json in Resources */,
+				42BF9DE8DC903DF025C33D29 /* no-search-results.png in Resources */,
+				7032B3C506BB31965CD05550 /* quick-note.png in Resources */,
+				35DD4D1651349334534ADB9C /* ready.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		714D6C92306E99379DC52B7D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				786E70332BA23FBC217E3AEF /* AppAppearanceTests.swift in Sources */,
+				0B3ADEF2DAA772F4A8520DF1 /* AppModelTests.swift in Sources */,
 				6FABE677E5D48465C8995F5F /* LibraryStoreTests.swift in Sources */,
-				B17191500F59F3C8A6CAE8BE /* MarkdownRenderEngineTests.swift in Sources */,
+				AA31CCF77288FDF53F1CBE2F /* MarkdownEditorIntegrationTests.swift in Sources */,
 				E36C54012CAC3A7CE35793BA /* MetadataStoreTests.swift in Sources */,
 				6B34D99721329C9E091FC163 /* NoteSessionTests.swift in Sources */,
 				246D019CED4620D102188DD5 /* PerformanceTests.swift in Sources */,
+				D24372951C410A11B17816B9 /* QuickNoteAppearanceTests.swift in Sources */,
 				BDD4B391E0A97A9ADB0E3E92 /* SearchIndexTests.swift in Sources */,
+				65FA03627FBB9C2A98507D19 /* SidebarKeyboardNavigationTests.swift in Sources */,
 				3142FB03157255405D3B8C69 /* SmokeTests.swift in Sources */,
 				A01A98585D47577FBB8F9507 /* TestSupport.swift in Sources */,
 			);
@@ -355,21 +559,33 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C856B0D837FA8FE831DF2C1 /* AppAppearance.swift in Sources */,
+				1E1788B446FC462EFC5736A4 /* AppAppearanceStore.swift in Sources */,
 				15521330FC39C484CF8344F3 /* AppModel.swift in Sources */,
+				F2968D7E225ED23EB643D235 /* AppearanceBackgroundView.swift in Sources */,
+				B9DF4C117B6884D119992CBF /* BrandSpotImage.swift in Sources */,
 				E70BA862C51FD56BEE12B4A2 /* DirectoryWatcher.swift in Sources */,
+				2A4EFF535136FFC3A54F9B44 /* GlobalHotKeyController.swift in Sources */,
+				08EC53E7B0A73008AC4F4C83 /* HoverFeedback.swift in Sources */,
 				3590F25EFFB77092B4F8A56E /* LibraryLocationPicker.swift in Sources */,
 				715D66AC3240D4B3AEBA1B92 /* LibraryPickerButton.swift in Sources */,
 				9453ED29D73E054A2627512B /* LibrarySidebar.swift in Sources */,
 				C25FE04C2BD6EF025D794D5F /* LibraryStore.swift in Sources */,
 				E7577A542132EA96DA2C3581 /* MainWindowView.swift in Sources */,
 				1F6C160BBB8B191709AAFD14 /* MarkdownEditorView.swift in Sources */,
-				1BFB6DF462C9CF8E7ACB862F /* MarkdownRenderEngine.swift in Sources */,
 				AA2FED8952258137174AA74E /* MetadataStore.swift in Sources */,
 				6BB4550A6BC70B3FE563F4E3 /* NoteModels.swift in Sources */,
+				A4D4CA2A2CDB097383EA627D /* NoteRenameConflictDialog.swift in Sources */,
 				3D0091C45D5E8E6CF29C71A2 /* NoteSession.swift in Sources */,
 				48B07A88D94F3CC91DD3ED0B /* PathUtilities.swift in Sources */,
+				66D6B75DE2D87ABDF72730D2 /* QuickCaptureCoordinator.swift in Sources */,
+				7BBD3089B366583D5E05A2E4 /* QuickNoteAppearance.swift in Sources */,
+				825BDA45BE0F133C94FEAB6A /* QuickNoteAppearanceEditor.swift in Sources */,
+				C1E673E0BCB593D6B4C4B49C /* QuickNoteAppearanceStore.swift in Sources */,
 				4DB2749A975B16BD5579BE64 /* RepotraApp.swift in Sources */,
 				4894291EAE1CE28E3A4502D9 /* SearchIndex.swift in Sources */,
+				9ED43E17FCF14E7EEA17238C /* SidebarKeyInputView.swift in Sources */,
+				FF02312F72D247617BA6567F /* SidebarKeyboardNavigation.swift in Sources */,
 				A57D843B2E6C1C747ED760DB /* StickyModels.swift in Sources */,
 				12DE25B7E773E93528FEE50B /* StickyNoteView.swift in Sources */,
 				B566DAB546E6E1F57E275743 /* StickyWindowCoordinator.swift in Sources */,
@@ -666,22 +882,21 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		4004461D8824D6254078C5A1 /* XCRemoteSwiftPackageReference "swift-markdown" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/swiftlang/swift-markdown.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.8.0;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		453D1D6A53357EF4F42EB9B2 /* XCLocalSwiftPackageReference "Vendor/MarkdownEngine" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Vendor/MarkdownEngine;
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		93E31CE5EB41110567168515 /* Markdown */ = {
+		1B66576A34359525749496E6 /* MarkdownEngine */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4004461D8824D6254078C5A1 /* XCRemoteSwiftPackageReference "swift-markdown" */;
-			productName = Markdown;
+			productName = MarkdownEngine;
+		};
+		971A484B4ACDAB24706D27B0 /* MarkdownEngineCodeBlocks */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MarkdownEngineCodeBlocks;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

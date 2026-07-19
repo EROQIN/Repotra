@@ -9,14 +9,16 @@ let package = Package(
         .executable(name: "Repotra", targets: ["Repotra"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-markdown.git", .upToNextMinor(from: "0.8.0")),
+        .package(path: "Vendor/MarkdownEngine"),
     ],
     targets: [
         .executableTarget(
             name: "Repotra",
             dependencies: [
-                .product(name: "Markdown", package: "swift-markdown"),
-            ]
+                .product(name: "MarkdownEngine", package: "MarkdownEngine"),
+                .product(name: "MarkdownEngineCodeBlocks", package: "MarkdownEngine"),
+            ],
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "RepotraTests",

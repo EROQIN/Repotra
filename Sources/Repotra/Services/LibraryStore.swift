@@ -22,13 +22,22 @@ actor LibraryStore {
         return try snapshot()
     }
 
-    func snapshot() throws -> LibrarySnapshot {
-        try LibrarySnapshot(rootURL: rootURL, roots: scanDirectory(rootURL, relativePath: ""))
+    func snapshot(excludingRootPaths excludedRootPaths: Set<String> = []) throws -> LibrarySnapshot {
+        try LibrarySnapshot(
+            rootURL: rootURL,
+            roots: scanDirectory(rootURL, relativePath: "").filter { !excludedRootPaths.contains($0.relativePath) }
+        )
     }
 
     func noteExists(at relativePath: String) -> Bool {
         guard let url = try? validatedURL(for: relativePath) else { return false }
         return fileManager.fileExists(atPath: url.path)
+    }
+
+    func directoryExists(at relativePath: String) -> Bool {
+        guard let url = try? validatedURL(for: relativePath) else { return false }
+        var isDirectory: ObjCBool = false
+        return fileManager.fileExists(atPath: url.path, isDirectory: &isDirectory) && isDirectory.boolValue
     }
 
     func readNote(at relativePath: String) throws -> NoteSnapshot {
@@ -95,28 +104,75 @@ actor LibraryStore {
     }
 
     func renameItem(at relativePath: String, to newName: String) throws -> String {
+        switch try renameNoteItem(at: relativePath, to: newName, resolution: nil) {
+        case let .renamed(result):
+            return result.newPath
+        case let .conflict(existingPath):
+            throw LibraryError.itemAlreadyExists((existingPath as NSString).lastPathComponent)
+        }
+    }
+
+    func renameNoteItem(
+        at relativePath: String,
+        to newName: String,
+        resolution: RenameConflictResolution?
+    ) throws -> LibraryRenameOutcome {
         let source = try validatedURL(for: relativePath)
         guard fileManager.fileExists(atPath: source.path) else { throw LibraryError.missingItem(relativePath) }
-        let sanitized = PathUtilities.sanitizedFilename(newName)
-        let targetName: String = if source.pathExtension.lowercased() == "md" {
-            (sanitized as NSString).deletingPathExtension + ".md"
-        } else {
-            sanitized
+        let targetName = PathUtilities.renameTargetName(
+            currentName: source.lastPathComponent,
+            proposedName: newName
+        )
+        guard targetName != source.lastPathComponent else {
+            return .renamed(LibraryRenameResult(newPath: relativePath, replacedPath: nil, recoveryURL: nil))
         }
-        let destination = source.deletingLastPathComponent().appendingPathComponent(targetName)
-        guard !fileManager.fileExists(atPath: destination.path) else {
-            throw CocoaError(.fileWriteFileExists)
+        let requestedDestination = source.deletingLastPathComponent().appendingPathComponent(targetName)
+        var destination = requestedDestination
+        var replacedPath: String?
+        var recoveryURL: URL?
+
+        if fileManager.fileExists(atPath: requestedDestination.path) {
+            switch resolution {
+            case nil:
+                return .conflict(existingPath: makeRelativePath(for: requestedDestination))
+            case .keepBoth:
+                destination = availableRenameURL(for: requestedDestination)
+            case .replace:
+                replacedPath = makeRelativePath(for: requestedDestination)
+                var resultingURL: NSURL?
+                try fileManager.trashItem(at: requestedDestination, resultingItemURL: &resultingURL)
+                recoveryURL = resultingURL as URL?
+            }
         }
-        try fileManager.moveItem(at: source, to: destination)
-        return makeRelativePath(for: destination)
+
+        do {
+            try fileManager.moveItem(at: source, to: destination)
+        } catch {
+            if let recoveryURL, replacedPath != nil,
+               !fileManager.fileExists(atPath: requestedDestination.path) {
+                try? fileManager.moveItem(at: recoveryURL, to: requestedDestination)
+            }
+            throw error
+        }
+        return .renamed(LibraryRenameResult(
+            newPath: makeRelativePath(for: destination),
+            replacedPath: replacedPath,
+            recoveryURL: recoveryURL
+        ))
     }
 
     func moveItem(at relativePath: String, into directory: String) throws -> String {
         let source = try validatedURL(for: relativePath)
+        guard fileManager.fileExists(atPath: source.path) else {
+            throw LibraryError.missingItem(relativePath)
+        }
         let destinationDirectory = try validatedDirectoryURL(for: directory)
+        if source.deletingLastPathComponent().standardizedFileURL == destinationDirectory.standardizedFileURL {
+            return relativePath
+        }
         let destination = destinationDirectory.appendingPathComponent(source.lastPathComponent)
         guard !fileManager.fileExists(atPath: destination.path) else {
-            throw CocoaError(.fileWriteFileExists)
+            throw LibraryError.itemAlreadyExists(source.lastPathComponent)
         }
         try fileManager.moveItem(at: source, to: destination)
         return makeRelativePath(for: destination)
@@ -171,6 +227,20 @@ actor LibraryStore {
             }
             return $0.name.localizedStandardCompare($1.name) == .orderedAscending
         }
+    }
+
+    private func availableRenameURL(for requestedURL: URL) -> URL {
+        let fileExtension = requestedURL.pathExtension
+        let base = requestedURL.deletingPathExtension().lastPathComponent
+        var counter = 2
+        var candidate: URL
+        repeat {
+            let name = "\(base) \(counter)"
+            candidate = requestedURL.deletingLastPathComponent().appendingPathComponent(name)
+            if !fileExtension.isEmpty { candidate.appendPathExtension(fileExtension) }
+            counter += 1
+        } while fileManager.fileExists(atPath: candidate.path)
+        return candidate
     }
 
     private func validatedMarkdownURL(for relativePath: String) throws -> URL {
