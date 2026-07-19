@@ -332,7 +332,6 @@ extension NativeTextViewWrapper.Coordinator {
                 tv.didChangeText()
                 let newLoc = max(lineRange.location, range.location - 2)
                 tv.setSelectedRange(NSRange(location: newLoc, length: 0))
-                DispatchQueue.main.async { self.text = tv.string }
             }
         } else {
             let newLine = "> " + originalLine
@@ -340,7 +339,6 @@ extension NativeTextViewWrapper.Coordinator {
                 tv.replaceCharacters(in: lineRange, with: newLine)
                 tv.didChangeText()
                 tv.setSelectedRange(NSRange(location: lineRange.location + 2, length: range.length))
-                DispatchQueue.main.async { self.text = tv.string }
             }
         }
     }
@@ -358,7 +356,6 @@ extension NativeTextViewWrapper.Coordinator {
                 tv.replaceCharacters(in: range, with: newText)
                 tv.didChangeText()
                 tv.setSelectedRange(NSRange(location: range.location + newText.count, length: 0))
-                DispatchQueue.main.async { self.text = tv.string }
             }
         } else {
             let insertion = "[](\(url))"
@@ -366,7 +363,6 @@ extension NativeTextViewWrapper.Coordinator {
                 tv.replaceCharacters(in: range, with: insertion)
                 tv.didChangeText()
                 tv.setSelectedRange(NSRange(location: range.location + 1, length: 0))
-                DispatchQueue.main.async { self.text = tv.string }
             }
         }
     }
@@ -383,7 +379,6 @@ extension NativeTextViewWrapper.Coordinator {
             tv.didChangeText()
             let cursorLoc = range.location + prefix.count + 4
             tv.setSelectedRange(NSRange(location: cursorLoc, length: 0))
-            DispatchQueue.main.async { self.text = tv.string }
         }
     }
 
@@ -399,7 +394,6 @@ extension NativeTextViewWrapper.Coordinator {
             tv.didChangeText()
             let cursorLoc = range.location + insertion.count
             tv.setSelectedRange(NSRange(location: cursorLoc, length: 0))
-            DispatchQueue.main.async { self.text = tv.string }
         }
     }
 
@@ -412,7 +406,6 @@ extension NativeTextViewWrapper.Coordinator {
             tv.replaceCharacters(in: range, with: insertion)
             tv.didChangeText()
             tv.setSelectedRange(NSRange(location: range.location + insertion.count, length: 0))
-            DispatchQueue.main.async { self.text = tv.string }
         }
     }
 
@@ -428,7 +421,6 @@ extension NativeTextViewWrapper.Coordinator {
             tv.replaceCharacters(in: range, with: newText)
             tv.didChangeText()
             tv.setSelectedRange(NSRange(location: range.location + marker.count + cursorOffset, length: 0))
-            DispatchQueue.main.async { self.text = tv.string }
         }
     }
 

@@ -17,7 +17,8 @@ let package = Package(
             dependencies: [
                 .product(name: "MarkdownEngine", package: "MarkdownEngine"),
                 .product(name: "MarkdownEngineCodeBlocks", package: "MarkdownEngine"),
-            ]
+            ],
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "RepotraTests",

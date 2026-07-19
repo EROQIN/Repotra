@@ -74,4 +74,11 @@ struct BlockParserTests {
         #expect(BlockParser.parse(text) == [b(.blockquote, 0, 8), b(.paragraph, 8, 1)])
         assertTiles(text)
     }
+
+    @Test("bare quote marker stays literal while spaced and populated quotes parse")
+    func quoteMarkerBoundary() {
+        #expect(BlockParser.parse(">") == [b(.paragraph, 0, 1)])
+        #expect(BlockParser.parse("> ") == [b(.blockquote, 0, 2)])
+        #expect(BlockParser.parse(">quoted") == [b(.blockquote, 0, 7)])
+    }
 }

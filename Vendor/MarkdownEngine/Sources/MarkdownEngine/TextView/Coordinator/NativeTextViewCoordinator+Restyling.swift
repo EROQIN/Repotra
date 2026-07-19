@@ -19,6 +19,9 @@ extension NativeTextViewCoordinator {
         from text: String,
         invalidateLayout: Bool = false
     ) {
+        // A rebuild is an authoritative external/document-state transition.
+        // Any NSTextView snapshot queued before it is stale by definition.
+        invalidatePendingTextBindingSync()
         // Storage is raw Markdown; only wiki links transform on display.
         // In raw source mode display IS storage — no transform, no metadata.
         let services = configuration.services

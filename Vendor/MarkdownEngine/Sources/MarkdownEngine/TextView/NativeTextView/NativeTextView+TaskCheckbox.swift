@@ -13,10 +13,10 @@ import AppKit
 
 extension NativeTextView {
 
-    /// The drawn checkbox square under `containerPoint`, if any.
+    /// The drawn circular task control under `containerPoint`, if any.
     ///
     /// The `[ ]` chars are collapsed to ~zero width, so their bounding rect sits
-    /// at the content edge; reconstruct the DRAWN square from the shared
+    /// at the content edge; reconstruct the drawn circle from the shared
     /// `TaskCheckboxGeometry` (right-aligned to it). `baseFont`, not
     /// NSTextView.font (see the draw site). `searchRange` bounds the scan —
     /// the hovered line for cursor checks, nil (whole doc) for clicks.
@@ -30,13 +30,13 @@ extension NativeTextView {
         storage.enumerateAttribute(.taskCheckbox, in: scan, options: []) { value, attrRange, stop in
             guard let isChecked = value as? Bool else { return }
             let anchor = bridge.boundingRect(forCharacterRange: attrRange, in: textContainer)
-            let rect = CGRect(
-                x: TaskCheckboxGeometry.boxX(contentX: anchor.minX, size: boxSize),
-                y: anchor.minY,
+            let visualRect = CGRect(
+                x: TaskCheckboxGeometry.controlX(contentX: anchor.minX, size: boxSize),
+                y: anchor.midY - boxSize / 2,
                 width: boxSize,
-                height: max(anchor.height, boxSize)
+                height: boxSize
             )
-            if rect.contains(containerPoint) {
+            if TaskCheckboxGeometry.hitRect(for: visualRect).contains(containerPoint) {
                 hit = (attrRange, isChecked)
                 stop.pointee = true
             }

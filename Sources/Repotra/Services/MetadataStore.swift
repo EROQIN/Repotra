@@ -33,9 +33,14 @@ actor MetadataStore {
         let config: LibraryConfiguration
         if let data = try? Data(contentsOf: libraryConfigURL),
            let decoded = try? JSONDecoder().decode(LibraryConfiguration.self, from: data),
-           decoded.schemaVersion == 1
+           (1 ... 3).contains(decoded.schemaVersion)
         {
-            config = decoded
+            var migrated = decoded
+            migrated.schemaVersion = 3
+            config = migrated
+            if decoded.schemaVersion != 3 {
+                try write(migrated, to: libraryConfigURL)
+            }
         } else {
             config = .fresh()
             try write(config, to: libraryConfigURL)
@@ -60,6 +65,48 @@ actor MetadataStore {
 
     func setQuickNotePath(_ path: String?) throws {
         libraryConfig.quickNotePath = path
+        try write(libraryConfig, to: libraryConfigURL)
+    }
+
+    func quickNoteState() -> (
+        legacyPath: String?,
+        directoryPath: String?,
+        sessions: [QuickNoteSessionRecord],
+        activeSessionID: UUID?
+    ) {
+        (
+            libraryConfig.quickNotePath,
+            libraryConfig.quickNotesDirectoryPath,
+            libraryConfig.quickNoteSessions.sorted { $0.createdAt < $1.createdAt },
+            libraryConfig.activeQuickNoteSessionID
+        )
+    }
+
+    func saveQuickNoteState(
+        directoryPath: String,
+        sessions: [QuickNoteSessionRecord],
+        activeSessionID: UUID?
+    ) throws {
+        libraryConfig.quickNotesDirectoryPath = directoryPath
+        libraryConfig.quickNoteSessions = sessions.sorted { $0.createdAt < $1.createdAt }
+        libraryConfig.activeQuickNoteSessionID = activeSessionID
+        libraryConfig.quickNotePath = nil
+        libraryConfig.schemaVersion = 3
+        try write(libraryConfig, to: libraryConfigURL)
+    }
+
+    func navigationState() -> (favorites: [String], recents: [String], display: LibraryDisplayState) {
+        (libraryConfig.favoritePaths, libraryConfig.recentPaths, libraryConfig.displayState)
+    }
+
+    func saveNavigationState(
+        favorites: [String],
+        recents: [String],
+        display: LibraryDisplayState
+    ) throws {
+        libraryConfig.favoritePaths = favorites
+        libraryConfig.recentPaths = recents
+        libraryConfig.displayState = display
         try write(libraryConfig, to: libraryConfigURL)
     }
 
@@ -99,9 +146,23 @@ actor MetadataStore {
         if !updates.isEmpty {
             try write(stickyFile, to: stickiesURL)
         }
-        if libraryConfig.quickNotePath == oldPath {
-            try setQuickNotePath(newPath)
+        if let quickPath = libraryConfig.quickNotePath,
+           quickPath == oldPath || quickPath.hasPrefix(oldPath + "/") {
+            libraryConfig.quickNotePath = newPath + String(quickPath.dropFirst(oldPath.count))
         }
+        libraryConfig.quickNoteSessions = libraryConfig.quickNoteSessions.map { record in
+            guard record.relativePath == oldPath || record.relativePath.hasPrefix(oldPath + "/") else { return record }
+            var updated = record
+            updated.relativePath = newPath + String(record.relativePath.dropFirst(oldPath.count))
+            return updated
+        }
+        if let directory = libraryConfig.quickNotesDirectoryPath,
+           directory == oldPath || directory.hasPrefix(oldPath + "/") {
+            libraryConfig.quickNotesDirectoryPath = newPath + String(directory.dropFirst(oldPath.count))
+        }
+        libraryConfig.favoritePaths = remap(libraryConfig.favoritePaths, from: oldPath, to: newPath)
+        libraryConfig.recentPaths = remap(libraryConfig.recentPaths, from: oldPath, to: newPath)
+        try write(libraryConfig, to: libraryConfigURL)
     }
 
     func removeRecords(under path: String) throws {
@@ -110,8 +171,20 @@ actor MetadataStore {
         }
         try write(stickyFile, to: stickiesURL)
         if libraryConfig.quickNotePath == path || libraryConfig.quickNotePath?.hasPrefix(path + "/") == true {
-            try setQuickNotePath(nil)
+            libraryConfig.quickNotePath = nil
         }
+        let removedIDs = Set(libraryConfig.quickNoteSessions.filter {
+            $0.relativePath == path || $0.relativePath.hasPrefix(path + "/")
+        }.map(\.id))
+        libraryConfig.quickNoteSessions.removeAll {
+            $0.relativePath == path || $0.relativePath.hasPrefix(path + "/")
+        }
+        if let active = libraryConfig.activeQuickNoteSessionID, removedIDs.contains(active) {
+            libraryConfig.activeQuickNoteSessionID = libraryConfig.quickNoteSessions.first?.id
+        }
+        libraryConfig.favoritePaths.removeAll { $0 == path || $0.hasPrefix(path + "/") }
+        libraryConfig.recentPaths.removeAll { $0 == path || $0.hasPrefix(path + "/") }
+        try write(libraryConfig, to: libraryConfigURL)
     }
 
     func importBackground(from sourceURL: URL) throws -> String {
@@ -127,5 +200,12 @@ actor MetadataStore {
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
         let data = try encoder.encode(value)
         try data.write(to: url, options: [.atomic])
+    }
+
+    private func remap(_ paths: [String], from oldPath: String, to newPath: String) -> [String] {
+        paths.map { path in
+            guard path == oldPath || path.hasPrefix(oldPath + "/") else { return path }
+            return newPath + String(path.dropFirst(oldPath.count))
+        }
     }
 }

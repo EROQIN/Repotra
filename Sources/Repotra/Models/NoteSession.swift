@@ -1,4 +1,5 @@
 import Foundation
+import MarkdownEngine
 import Observation
 
 @MainActor
@@ -8,13 +9,17 @@ final class NoteSession {
     private(set) var relativePath: String
     var content: String
     private(set) var fingerprint: String
+    private(set) var modifiedAt: Date
     private(set) var isDirty = false
     private(set) var isSaving = false
     var conflict: ExternalConflict?
     var lastError: String?
+    private(set) var outline: [MarkdownOutlineItem]
 
     @ObservationIgnored private let store: LibraryStore
     @ObservationIgnored private var saveTask: Task<Void, Never>?
+    @ObservationIgnored private var outlineTask: Task<Void, Never>?
+    @ObservationIgnored private var outlineGeneration = 0
 
     var title: String {
         ((relativePath as NSString).lastPathComponent as NSString).deletingPathExtension
@@ -24,14 +29,20 @@ final class NoteSession {
         relativePath = snapshot.relativePath
         content = snapshot.content
         fingerprint = snapshot.fingerprint
+        modifiedAt = snapshot.modifiedAt
+        outline = MarkdownDocumentOutline.parse(snapshot.content)
         self.store = store
     }
 
-    deinit { saveTask?.cancel() }
+    deinit {
+        saveTask?.cancel()
+        outlineTask?.cancel()
+    }
 
     func updateContent(_ value: String) {
         guard value != content else { return }
         content = value
+        scheduleOutlineRefresh()
         isDirty = true
         if conflict == nil {
             scheduleSave()
@@ -68,6 +79,7 @@ final class NoteSession {
             switch outcome {
             case let .saved(snapshot):
                 fingerprint = snapshot.fingerprint
+                modifiedAt = snapshot.modifiedAt
                 conflict = nil
                 lastError = nil
                 isDirty = content != value
@@ -92,7 +104,9 @@ final class NoteSession {
                 conflict = ExternalConflict(kind: .modified, diskSnapshot: snapshot)
             } else {
                 content = snapshot.content
+                scheduleOutlineRefresh()
                 fingerprint = snapshot.fingerprint
+                modifiedAt = snapshot.modifiedAt
                 conflict = nil
             }
         } catch {
@@ -103,7 +117,9 @@ final class NoteSession {
     func reloadExternalVersion() {
         guard let snapshot = conflict?.diskSnapshot else { return }
         content = snapshot.content
+        scheduleOutlineRefresh()
         fingerprint = snapshot.fingerprint
+        modifiedAt = snapshot.modifiedAt
         isDirty = false
         conflict = nil
         lastError = nil
@@ -131,6 +147,17 @@ final class NoteSession {
         } catch {
             lastError = error.localizedDescription
             return nil
+        }
+    }
+
+    private func scheduleOutlineRefresh() {
+        outlineGeneration &+= 1
+        let generation = outlineGeneration
+        outlineTask?.cancel()
+        outlineTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .milliseconds(80))
+            guard let self, !Task.isCancelled, generation == outlineGeneration else { return }
+            outline = MarkdownDocumentOutline.parse(content)
         }
     }
 }

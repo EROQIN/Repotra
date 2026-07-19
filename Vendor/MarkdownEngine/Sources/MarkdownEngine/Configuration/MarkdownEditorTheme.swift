@@ -39,6 +39,11 @@ public struct MarkdownEditorTheme: Sendable {
     /// Foreground color for heading marker glyphs (`#`, `##`, …).
     public var headingMarker: NSColor
 
+    // MARK: Task controls
+
+    /// Fill color for completed circular task controls.
+    public var taskCheckboxAccent: NSColor
+
     // MARK: Links
 
     /// Foreground color for hyperlinks that resolve to an URL.
@@ -86,6 +91,7 @@ public struct MarkdownEditorTheme: Sendable {
         mutedText: NSColor = .secondaryLabelColor,
         disabledText: NSColor = .tertiaryLabelColor,
         headingMarker: NSColor = .gray,
+        taskCheckboxAccent: NSColor = .controlAccentColor,
         link: NSColor = .linkColor,
         incompleteLink: NSColor = .systemBlue,
         findMatchHighlight: NSColor = .systemYellow,
@@ -99,6 +105,7 @@ public struct MarkdownEditorTheme: Sendable {
         self.mutedText = mutedText
         self.disabledText = disabledText
         self.headingMarker = headingMarker
+        self.taskCheckboxAccent = taskCheckboxAccent
         self.link = link
         self.incompleteLink = incompleteLink
         self.findMatchHighlight = findMatchHighlight

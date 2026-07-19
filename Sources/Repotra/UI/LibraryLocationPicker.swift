@@ -84,7 +84,7 @@ struct LibraryLocationPicker: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(RepotraHoverButtonStyle())
                     .accessibilityLabel("打开文件夹 \(url.lastPathComponent)")
                 }
                 .listStyle(.inset)

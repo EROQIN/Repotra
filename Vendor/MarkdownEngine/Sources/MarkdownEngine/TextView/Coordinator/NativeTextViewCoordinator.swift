@@ -72,6 +72,13 @@ public final class NativeTextViewCoordinator: NSObject, NSTextViewDelegate {
     /// One-shot guard so `updateCodeBlockSelection` only forces a full-document layout once per document.
     var didEnsureLayoutForCurrentDocument: Bool = false
     var lastSyncedText: String
+    /// Monotonic revision for deferred NSTextView → SwiftUI binding writes.
+    /// Only the newest edit may update the binding; older queued writes are
+    /// discarded instead of replaying stale Markdown into the live editor.
+    var textSyncGeneration: UInt64 = 0
+    /// One-shot guard against AppKit/IME inserting a plain list prefix after a
+    /// root empty-structure Return transaction already removed the full prefix.
+    var pendingAutomaticContinuationSuppression: (location: Int, expiresAt: TimeInterval)?
     var isProgrammaticEdit: Bool = false
     var isWritingToolsActive: Bool = false
     var wtStartDocumentId: String?
@@ -84,6 +91,8 @@ public final class NativeTextViewCoordinator: NSObject, NSTextViewDelegate {
     var wtUndoneDuringSession: Bool = false
     var wtPostUndoSnapshot: String?
     var lastAppliedInlineReplacementID: UUID?
+    var lastHandledFocusRequest = 0
+    var lastHandledNavigationRequest = 0
     var activeTokenIndices: Set<Int> = []
     var previousActiveTokenIndices: Set<Int> = []
     var wikiLinkMetadata: [WikiLinkService.RangeKey: WikiLinkService.LinkMetadata] = [:]

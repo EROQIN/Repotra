@@ -17,7 +17,7 @@
 //    • heading        — headingRegex        `^\s*#{1,6} +…`
 //    • thematic break — styler HR pattern   `^\s*(-{3,}|\*{3,}|_{3,})\s*$`
 //    • fenced code    — codeBlockRegex       opening/closing ``` line
-//    • blockquote     — blockquoteRegex     `^[ \t]{0,3}(>…)`
+//    • blockquote     — MarkdownLineStructure shared prefix parser
 //
 
 import Foundation
@@ -308,33 +308,14 @@ enum BlockParser {
         return rest.first == " "
     }
 
-    /// `^[ \t]{0,3}>…` — up to 3 leading spaces/tabs, then a `>`.
+    /// A quote prefix recognized by the same parser used by editing and styling.
     private static func isBlockquote(_ line: String) -> Bool {
-        var rest = Substring(line)
-        var indent = 0
-        while indent < 3, let c = rest.first, c == " " || c == "\t" {
-            rest = rest.dropFirst(); indent += 1
-        }
-        return rest.first == ">"
+        MarkdownLineStructure.parseQuote(line) != nil
     }
 
     /// A list-item line: optional indent, a bullet (`-`/`*`/`+`) or ordered marker (`1.`/`1)`), then a space/tab.
     static func isListItem(_ line: String) -> Bool {
-        var rest = Substring(line).drop { $0 == " " || $0 == "\t" }
-        guard let first = rest.first else { return false }
-        if first == "-" || first == "*" || first == "+" {
-            rest = rest.dropFirst()
-        } else if first.isNumber {
-            var digits = 0
-            while let c = rest.first, c.isNumber, digits < 9 { rest = rest.dropFirst(); digits += 1 }
-            guard let d = rest.first, d == "." || d == ")" else { return false }
-            rest = rest.dropFirst()
-        } else {
-            return false
-        }
-        // A space/tab must follow the marker — a bare `-`/`*`/`1.` stays literal (pre-AST bullet behavior).
-        guard let after = rest.first else { return false }
-        return after == " " || after == "\t"
+        MarkdownLineStructure.parseList(line) != nil
     }
 
     /// A GFM table row: `^[ \t]*\|.+\|[ \t]*$` — outer pipes, content between.

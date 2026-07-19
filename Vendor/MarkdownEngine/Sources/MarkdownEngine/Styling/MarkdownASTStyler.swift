@@ -246,6 +246,7 @@ enum MarkdownASTStyler {
             }
             if item.checked, NSMaxRange(item.range) > NSMaxRange(box) {
                 attrs.append((NSRange(location: NSMaxRange(box), length: NSMaxRange(item.range) - NSMaxRange(box)), [
+                    .foregroundColor: ctx.theme.mutedText,
                     .strikethroughStyle: NSUnderlineStyle.single.rawValue,
                     .strikethroughColor: ctx.theme.strikethroughColor,
                 ]))

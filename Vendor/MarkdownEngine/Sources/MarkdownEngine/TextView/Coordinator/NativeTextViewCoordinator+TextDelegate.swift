@@ -80,11 +80,7 @@ extension NativeTextViewCoordinator {
         if configuration.rawSourceMode {
             guard !tv.hasMarkedText() else { return }
             if tv.string != lastSyncedText {
-                let rawText = tv.string
-                DispatchQueue.main.async {
-                    self.lastSyncedText = rawText
-                    self.text = rawText
-                }
+                scheduleTextBindingSync(tv.string)
             }
             if let bottomTextView = tv as? NativeTextView,
                let scrollView = tv.enclosingScrollView {
@@ -120,10 +116,7 @@ extension NativeTextViewCoordinator {
             )
             self.wikiLinkMetadata = storageState.metadata
             if storageState.storage != self.lastSyncedText {
-                DispatchQueue.main.async {
-                    self.lastSyncedText = storageState.storage
-                    self.text = storageState.storage
-                }
+                scheduleTextBindingSync(storageState.storage)
             }
         }
 
@@ -227,6 +220,28 @@ extension NativeTextViewCoordinator {
               textView.undoManager?.isUndoing != true,
               textView.undoManager?.isRedoing != true else { return }
         textView.breakUndoCoalescing()
+    }
+
+    /// SwiftUI binding writes are deferred to avoid mutating state inside an
+    /// AppKit delegate callback. Rapid structural edits can enqueue several
+    /// snapshots in one run loop, so gate them by a monotonic generation and
+    /// document identity. This prevents an older task continuation from
+    /// overwriting a newer task-exit transaction.
+    func scheduleTextBindingSync(_ value: String) {
+        textSyncGeneration &+= 1
+        let generation = textSyncGeneration
+        let scheduledDocumentID = documentId
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            guard generation == self.textSyncGeneration,
+                  scheduledDocumentID == self.documentId else { return }
+            self.lastSyncedText = value
+            self.text = value
+        }
+    }
+
+    func invalidatePendingTextBindingSync() {
+        textSyncGeneration &+= 1
     }
 
     public func textViewDidChangeSelection(_ notification: Notification) {
@@ -470,6 +485,21 @@ extension NativeTextViewCoordinator {
 
     public func textView(_ textView: NSTextView, shouldChangeTextIn affectedCharRange: NSRange, replacementString: String?) -> Bool {
         if isProgrammaticEdit { return true }
+        if let pending = pendingAutomaticContinuationSuppression {
+            let isFresh = ProcessInfo.processInfo.systemUptime <= pending.expiresAt
+            let isAtExitCaret = affectedCharRange.location == pending.location
+                && affectedCharRange.length == 0
+            let isAutomaticEmptyStructure = replacementString.flatMap { candidate -> MarkdownLineStructure? in
+                guard !candidate.contains("\n"), !candidate.contains("\r") else { return nil }
+                return MarkdownLineStructure.parse(candidate)
+            }.map { structure in
+                replacementString.map { structure.contentIsEmpty(in: $0) } ?? false
+            } ?? false
+            pendingAutomaticContinuationSuppression = nil
+            if isFresh, isAtExitCaret, isAutomaticEmptyStructure {
+                return false
+            }
+        }
         if isWritingToolsActive { return true }
         // Raw mode: plain-text editing — no smart Markdown input.
         if configuration.rawSourceMode { return true }
@@ -520,6 +550,9 @@ extension NativeTextViewCoordinator {
         if commandSelector == #selector(NSResponder.insertBacktab(_:)) {
             return handleBacktab(textView)
         }
+        if commandSelector == #selector(NSResponder.insertLineBreak(_:)) {
+            return applyPlannedAction(.hardBreak, to: textView)
+        }
         // While an inline [[…]] / ![[…]] preview is open, route ↑/↓/Enter/Esc to the embedder's
         // autocomplete list (it returns true to consume the key; false → normal editor handling).
         if (isWikiLinkActive || isImageEmbedActive), let handler = onInlinePreviewKey {
@@ -532,6 +565,15 @@ extension NativeTextViewCoordinator {
             default: key = nil
             }
             if let key, handler(key) { return true }
+        }
+        // Route ordinary Return explicitly through the transaction planner.
+        // Relying on AppKit to later call shouldChangeText with "\n" made the
+        // behavior depend on host-window selection normalization (notably for
+        // collapsed task markers in quick capture). IME Return must remain in
+        // AppKit so it can commit marked text normally.
+        if commandSelector == #selector(NSResponder.insertNewline(_:)),
+           !textView.hasMarkedText() {
+            return applyPlannedAction(.insert("\n"), to: textView)
         }
         return false
     }
@@ -694,53 +736,28 @@ extension NativeTextViewCoordinator {
     }
 
     func handleBacktab(_ textView: NSTextView) -> Bool {
-        let nsText = textView.string as NSString
-        let caretLoc = textView.selectedRange().location
-        let lineRange = nsText.lineRange(for: NSRange(location: caretLoc, length: 0))
-        let line = nsText.substring(with: lineRange)
+        applyPlannedAction(.outdent, to: textView)
+    }
 
-        let pattern = #"^([\t ]*)((\d+)\.|[-•*+])\s"#
-        let regex = try? NSRegularExpression(pattern: pattern)
-        if let regex = regex,
-           let match = regex.firstMatch(in: line, range: NSRange(location: 0, length: line.utf16.count)) {
-            let wsRangeLocal = match.range(at: 1)
-            let wsString = (line as NSString).substring(with: wsRangeLocal)
-            let wsDocStart = lineRange.location + wsRangeLocal.location
-            let depth = MarkdownLists.indentLevel(from: wsString)
-            // Legacy `\t• ` top-level depth=1 (synthetic tab); new format depth=0.
-            let markerString = (line as NSString).substring(with: match.range(at: 2))
-            let isLegacyBulletGlyph = markerString.first == "•"
-            let minDepth = isLegacyBulletGlyph ? 1 : 0
-            if depth <= minDepth {
-                return true
-            }
-
-            if wsRangeLocal.length > 0 {
-                if wsString.hasPrefix("\t") {
-                    MarkdownLists.performEdit(textView, replace: NSRange(location: wsDocStart, length: 1), with: "")
-                    textView.setSelectedRange(NSRange(location: max(0, caretLoc - 1), length: 0))
-                    return true
-                } else {
-                    var removeCount = 0
-                    for ch in wsString {
-                        if ch == " " && removeCount < 2 { removeCount += 1 } else { break }
-                    }
-                    if removeCount == 0 { removeCount = min(2, wsRangeLocal.length) }
-                    MarkdownLists.performEdit(textView, replace: NSRange(location: wsDocStart, length: removeCount), with: "")
-                    textView.setSelectedRange(NSRange(location: max(0, caretLoc - removeCount), length: 0))
-                    return true
-                }
-            } else {
-                return true
-            }
+    private func applyPlannedAction(_ action: MarkdownEditAction, to textView: NSTextView) -> Bool {
+        let selection = textView.selectedRange()
+        let insideCode = textView.string.contains("`") && MarkdownDetection.isInsideCodeBlock(
+            location: min(selection.location, (textView.string as NSString).length),
+            in: textView.string
+        )
+        let context = MarkdownEditContext(
+            source: textView.string,
+            affectedRange: selection,
+            selectedRange: selection,
+            maximumNestingLevel: configuration.lists.maximumNestingLevel,
+            isInsideCodeBlock: insideCode,
+            autoClosePairsEnabled: configuration.lists.autoClosePairsEnabled
+        )
+        guard let transaction = MarkdownEditPlanner.transaction(for: action, in: context) else {
+            return false
         }
-
-        if line.hasPrefix("\t") {
-            MarkdownLists.performEdit(textView, replace: NSRange(location: lineRange.location, length: 1), with: "")
-            textView.setSelectedRange(NSRange(location: max(0, caretLoc - 1), length: 0))
-            return true
-        }
-        return false
+        MarkdownLists.performEdit(textView, transaction: transaction)
+        return true
     }
 
 }

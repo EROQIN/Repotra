@@ -14,6 +14,14 @@ enum PathUtilities {
         return joined.isEmpty ? fallback : joined
     }
 
+    static func renameTargetName(currentName: String, proposedName: String) -> String {
+        let sanitized = sanitizedFilename(proposedName)
+        guard (currentName as NSString).pathExtension.lowercased() == "md" else {
+            return sanitized
+        }
+        return (sanitized as NSString).deletingPathExtension + ".md"
+    }
+
     static func hexColor(_ value: String, fallback: NSColor = .labelColor) -> NSColor {
         var text = value.trimmingCharacters(in: .whitespacesAndNewlines)
         if text.hasPrefix("#") {

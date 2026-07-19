@@ -265,6 +265,51 @@ struct TaskCheckboxGeometryStylerTests {
         #expect(abs((revealedIndent ?? -1) - expected) < 0.01)
     }
 
+    @Test("circular control keeps the marker slot and expands only its hit target")
+    func circularControlGeometry() {
+        let size = TaskCheckboxGeometry.size(for: baseFont)
+        let contentX: CGFloat = 100
+        let visual = CGRect(
+            x: TaskCheckboxGeometry.controlX(contentX: contentX, size: size),
+            y: 20,
+            width: size,
+            height: size
+        )
+        let hit = TaskCheckboxGeometry.hitRect(for: visual)
+
+        #expect(abs(visual.maxX - (contentX - TaskCheckboxGeometry.gap)) < 0.01)
+        #expect(abs(hit.minX - (visual.minX - TaskCheckboxGeometry.hitSlop)) < 0.01)
+        #expect(abs(hit.width - (visual.width + TaskCheckboxGeometry.hitSlop * 2)) < 0.01)
+        #expect(hit.contains(CGPoint(x: visual.minX - 2, y: visual.midY)))
+    }
+
+    @Test("completed task text is muted and struck through")
+    func completedTaskDecoration() {
+        var configuration = MarkdownEditorConfiguration.default
+        configuration.theme.mutedText = .systemPurple
+        configuration.theme.strikethroughColor = .systemOrange
+        let attrs = MarkdownASTStyler.styleAttributes(
+            text: "- [x] finished",
+            fontName: fontName,
+            fontSize: base,
+            caretLocation: -1,
+            configuration: configuration
+        )
+        let contentPosition = 7
+        var foreground: NSColor?
+        var strikeStyle: Int?
+        var strikeColor: NSColor?
+        for (range, values) in attrs where NSLocationInRange(contentPosition, range) {
+            if let value = values[.foregroundColor] as? NSColor { foreground = value }
+            if let value = values[.strikethroughStyle] as? Int { strikeStyle = value }
+            if let value = values[.strikethroughColor] as? NSColor { strikeColor = value }
+        }
+
+        #expect(foreground?.isEqual(NSColor.systemPurple) == true)
+        #expect(strikeStyle == NSUnderlineStyle.single.rawValue)
+        #expect(strikeColor?.isEqual(NSColor.systemOrange) == true)
+    }
+
 }
 
 /// Canonical, order-independent string of styled ranges so two style runs can be

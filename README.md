@@ -5,7 +5,7 @@
 <h1 align="center">Repotra</h1>
 
 <p align="center">
-  原生、轻量、源码保真的 macOS Markdown 笔记与桌面便签。
+  原生、轻量、源码保真的 macOS Markdown 笔记应用。
 </p>
 
 <p align="center">
@@ -14,9 +14,11 @@
   <img alt="TextKit 2" src="https://img.shields.io/badge/Editor-TextKit%202-3578E5">
 </p>
 
-Repotra 把普通 `.md` 文件作为唯一内容来源，在一个安静的融合式编辑器里完成写作。任意笔记都能贴到桌面成为独立浮层，主窗口、贴图和快速输入面板共享同一份内容。
+Repotra 把普通 `.md` 文件作为唯一内容来源，在一个安静的融合式编辑器里完成写作。任意当前笔记都能在单实例临时浮窗中继续编辑；快速笔记使用独立的多会话浮窗，所有窗口共享原始 Markdown 内容。
 
-> Repotra 仍处于早期开发阶段。目前面向本地构建与体验，尚未提供签名发行包或 Mac App Store 版本。
+“设置 → 个性化”可配置贯穿主窗口三栏的系统、纯色、渐变或图片背景，并提供图片填充方式、遮罩强度和自动/手动文字颜色。该配置在所有资料库间共享，与快速笔记的独立外观互不影响。
+
+Repotra 1.0 面向本机交付，构建脚本会输出临时签名应用和便于传输的 ZIP；不包含 Developer ID 公证或 Mac App Store 沙盒化。
 
 ## 亮点
 
@@ -24,9 +26,9 @@ Repotra 把普通 `.md` 文件作为唯一内容来源，在一个安静的融�
 | --- | --- |
 | ✍️ | **源码保真编辑**：渲染只改变 TextKit 2 显示属性，不替换 Markdown 字符，不破坏选区与 Undo 坐标。 |
 | 👁️ | **融合式 Markdown**：离开当前行后立即渲染；光标回到节点内部时重新显示对应标记。 |
-| 📌 | **桌面贴图**：一键把笔记贴到所有 Space 和全屏应用之上，支持置顶、位置恢复、字体、背景、透明度、圆角、边框与无标题栏样式。 |
-| ⚡️ | **快速记录**：全局 `⌥⌘N` 呼出独立浮动笔记窗，不激活或跳转 Repotra 主窗口。 |
-| 🗂️ | **本地资料库**：目录树、全文搜索、重命名、移动、废纸篓、原子保存和外部修改冲突保护。 |
+| ◫ | **临时浮窗**：当前普通笔记以单实例浮窗打开，切换时复用窗口，隐藏前立即保存并恢复独立位置。 |
+| ◇ | **快速记录会话**：全局 `⌥⌘N` 恢复上次会话，支持稳定排序的新建、切换、重命名和删除。 |
+| 🗂️ | **本地资料库**：整行导航、双击行内重命名、拖入文件夹、全文搜索、字符统计、原子保存和冲突保护。 |
 | 🖼️ | **可迁移资源**：粘贴或拖入图片后保存到 `assets/UUID.ext`，整个资料库移动后仍能显示。 |
 
 ## Markdown 支持
@@ -57,7 +59,7 @@ Scripts/build-app.sh
 open .build/Repotra.app
 ```
 
-`build-app.sh` 会生成并临时签名 `.build/Repotra.app`，仅供本机开发使用。
+`build-app.sh` 会生成并校验 `.build/Repotra.app`、`.build/Repotra-1.0.0-macos.zip` 与对应 SHA-256 文件，仅供本机运行和传输。
 
 ### Xcode
 
@@ -78,7 +80,9 @@ swift test --package-path Vendor/MarkdownEngine
 
 完整 Xcode 安装后，还应运行 `RepotraUITests`，并在 macOS 14 与 15 上完成手动验收。
 
-Repotra 运行后会注册全局 `⌥⌘N`；即使当前正在使用其他应用，也会直接显示快速笔记浮窗，不会把主窗口切到前台。首次使用仍需先选择资料库。
+Repotra 运行后会注册全局 `⌥⌘N`；即使当前正在使用其他应用，也会直接显示快速笔记浮窗，不会把主窗口切到前台。再次按下快捷键会隐藏浮窗，窗口会记住上次的位置和尺寸。首次使用仍需先选择资料库。
+
+快速笔记每次显示都会直接聚焦到文末，不会自动插入时间标题。会话保存在资料库根目录下可见的“快速笔记”文件夹中，但不会重复出现在普通笔记、全部笔记或最近编辑列表。外观设置支持实时预览，只有点击“完成”才会保存；取消或关闭设置会恢复原来的外观。
 
 ## 常用快捷键
 
@@ -95,7 +99,7 @@ Repotra 运行后会注册全局 `⌥⌘N`；即使当前正在使用其他应�
 
 ## 设计与架构
 
-Repotra 使用 SwiftUI 管理应用状态与主界面，编辑区域和桌面便签窗口由 AppKit 提供。Markdown 源码始终是唯一文本存储，文件 I/O、搜索与元数据分别由 actor 隔离。
+Repotra 使用 SwiftUI 管理应用状态与主界面，编辑区域与浮动编辑窗口由 AppKit 提供。Markdown 源码始终是唯一文本存储，文件 I/O、搜索与元数据分别由 actor 隔离。
 
 ```text
 SwiftUI / AppKit windows
@@ -104,7 +108,7 @@ SwiftUI / AppKit windows
         ├── MarkdownEngine ── TextKit 2 styling and input
         ├── LibraryStore ── atomic file operations
         ├── SearchIndex ── title, path and body search
-        └── MetadataStore ── library and sticky state
+        └── MetadataStore ── schema v3 navigation and quick sessions
 ```
 
 编辑器基于仓库内固定版本的 [swift-markdown-engine 0.9.0](https://github.com/nodes-app/swift-markdown-engine)，并保留其 Apache 2.0 许可证与上游说明。代码高亮由 HighlighterSwift 提供。
@@ -114,17 +118,19 @@ SwiftUI / AppKit windows
 ```text
 My Notes/
 ├── Note.md
+├── 快速笔记/                 # 多会话 Markdown；普通列表隐藏、全局搜索可见
+│   └── 未命名速记.md
 ├── assets/                    # 正文图片
 └── .repotra/                  # 在文件树和搜索中隐藏
-    ├── library.json           # schemaVersion、资料库 UUID、快速笔记路径
-    ├── stickies.json          # 便签窗口与外观
+    ├── library.json           # schema v3、快速会话、收藏和展示状态
+    ├── stickies.json          # 旧桌面贴图元数据，仅为降级兼容保留
     └── backgrounds/           # 便签背景图
 ```
 
-关闭贴图只会取消贴图，不会删除 Markdown 文件；删除笔记时使用 macOS 废纸篓。
+删除普通笔记或快速会话时使用 macOS 废纸篓。旧桌面贴图不会自动恢复，也没有产品入口；元数据仅保留以避免旧版本降级时丢失记录。
 
 ## 项目状态与许可
 
-Repotra 当前版本为 `0.1.0`。主项目尚未声明开源许可证，因此默认保留所有权利；`Vendor/` 中的第三方代码继续遵循其各自许可证。发布正式开源版本前应先明确主项目许可证。
+Repotra 当前版本为 `1.0.0`。主项目尚未声明开源许可证，因此默认保留所有权利；`Vendor/` 中的第三方代码继续遵循其各自许可证。发布正式开源版本前应先明确主项目许可证。
 
 欢迎通过 Issues 提交问题与建议。

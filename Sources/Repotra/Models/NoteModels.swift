@@ -38,6 +38,46 @@ struct SearchResult: Identifiable, Hashable, Sendable {
     }
 }
 
+struct NoteMetrics: Hashable, Sendable {
+    let relativePath: String
+    let modifiedAt: Date
+    let characterCount: Int
+}
+
+enum RenameConflictResolution: Equatable, Sendable {
+    case replace
+    case keepBoth
+}
+
+struct NoteRenameConflict: Identifiable, Equatable, Sendable {
+    let sourcePath: String
+    let targetPath: String
+    let proposedName: String
+
+    var id: String { "\(sourcePath)->\(targetPath)" }
+}
+
+enum NoteRenameOutcome: Equatable, Sendable {
+    case renamed(String)
+    case conflict(NoteRenameConflict)
+    case failed(String)
+
+    var succeeded: Bool {
+        if case .renamed = self { true } else { false }
+    }
+}
+
+struct LibraryRenameResult: Sendable {
+    let newPath: String
+    let replacedPath: String?
+    let recoveryURL: URL?
+}
+
+enum LibraryRenameOutcome: Sendable {
+    case renamed(LibraryRenameResult)
+    case conflict(existingPath: String)
+}
+
 enum NoteSaveOutcome: Sendable {
     case saved(NoteSnapshot)
     case conflict(NoteSnapshot)
@@ -59,6 +99,7 @@ enum LibraryError: LocalizedError, Sendable {
     case invalidPath
     case unsupportedFile
     case missingItem(String)
+    case itemAlreadyExists(String)
     case reservedPath
     case noLibrary
 
@@ -67,6 +108,7 @@ enum LibraryError: LocalizedError, Sendable {
         case .invalidPath: "路径不在当前资料库中。"
         case .unsupportedFile: "Repotra 仅支持 Markdown 文件。"
         case let .missingItem(path): "找不到项目：\(path)"
+        case let .itemAlreadyExists(name): "目标文件夹中已存在“\(name)”。"
         case .reservedPath: ".repotra 是应用保留目录。"
         case .noLibrary: "尚未打开资料库。"
         }

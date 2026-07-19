@@ -74,6 +74,15 @@ public struct NativeTextViewWrapper: NSViewRepresentable {
     /// Places the caret at the end after the initial document is laid out.
     /// Useful for append-only capture surfaces; ignored on later updates.
     public var startsAtDocumentEnd: Bool
+    /// A host-controlled one-shot token. Whenever the value changes, the
+    /// existing editor becomes first responder and places the caret at the
+    /// document end without rebuilding text storage or its undo manager.
+    public var focusRequest: Int
+    /// A monotonic host token for source navigation. When it changes, the
+    /// existing text view moves its insertion point to `navigationLocation`
+    /// and scrolls there without rebuilding storage or replacing its undo stack.
+    public var navigationRequest: Int
+    public var navigationLocation: Int
     /// Optional paste hook. Return a Markdown image-embed string (e.g.
     /// `"![[my-image]]"`) to insert at the caret, or `nil` to fall through
     /// to the system's default plain-text paste.
@@ -81,6 +90,14 @@ public struct NativeTextViewWrapper: NSViewRepresentable {
     /// Called when `/` is typed at the beginning of a line. The slash is
     /// consumed so the host can present a Markdown block command palette.
     public var onSlashCommand: (() -> Void)?
+    /// Geometry-aware Slash command callback. The supplied rect is the caret
+    /// in the editor scroll viewport's coordinate space, suitable for placing
+    /// a host-owned follow-the-caret palette. When supplied, this callback is
+    /// preferred over ``onSlashCommand``.
+    public var onSlashCommandAtCaret: ((CGRect) -> Void)?
+    /// Keyboard routing for a host-owned slash command palette.
+    public var onCommandPaletteKey: ((InlinePreviewKey) -> Bool)?
+    public var onFocusChange: ((Bool) -> Void)?
 
     /// Fires when the user clicks a `[[Name]]` link. The argument is the
     /// resolved opaque identifier (or the display name when no resolver
@@ -146,8 +163,14 @@ public struct NativeTextViewWrapper: NSViewRepresentable {
         documentId: String = "default",
         isEditable: Bool = true,
         startsAtDocumentEnd: Bool = false,
+        focusRequest: Int = 0,
+        navigationRequest: Int = 0,
+        navigationLocation: Int = 0,
         onPasteImage: ((NSPasteboard) -> String?)? = nil,
         onSlashCommand: (() -> Void)? = nil,
+        onSlashCommandAtCaret: ((CGRect) -> Void)? = nil,
+        onCommandPaletteKey: ((InlinePreviewKey) -> Bool)? = nil,
+        onFocusChange: ((Bool) -> Void)? = nil,
         onLinkClick: ((String) -> Void)? = nil,
         onCaretRectChange: ((CGRect) -> Void)? = nil,
         onSelectionChange: ((NSRange) -> Void)? = nil,
@@ -172,8 +195,14 @@ public struct NativeTextViewWrapper: NSViewRepresentable {
         self.documentId = documentId
         self.isEditable = isEditable
         self.startsAtDocumentEnd = startsAtDocumentEnd
+        self.focusRequest = focusRequest
+        self.navigationRequest = navigationRequest
+        self.navigationLocation = navigationLocation
         self.onPasteImage = onPasteImage
         self.onSlashCommand = onSlashCommand
+        self.onSlashCommandAtCaret = onSlashCommandAtCaret
+        self.onCommandPaletteKey = onCommandPaletteKey
+        self.onFocusChange = onFocusChange
         self.onLinkClick = onLinkClick
         self.onCaretRectChange = onCaretRectChange
         self.onSelectionChange = onSelectionChange
@@ -284,8 +313,17 @@ public struct NativeTextViewWrapper: NSViewRepresentable {
         textView.isAutomaticQuoteSubstitutionEnabled = true
         textView.isAutomaticDataDetectionEnabled = true
         textView.isAutomaticDashSubstitutionEnabled = false
+        // MarkdownEditPlanner owns list/task/quote continuation. AppKit's
+        // automatic text-replacement pass runs after Return and can otherwise
+        // reinsert a plain "- " after an empty task transaction removed its
+        // complete "- [ ] " prefix. Keeping this off also prevents the system
+        // from racing our ordered-list and quote transactions.
+        textView.isAutomaticTextReplacementEnabled = false
         textView.onPasteImage = onPasteImage
         textView.onSlashCommand = onSlashCommand
+        textView.onSlashCommandAtCaret = onSlashCommandAtCaret
+        textView.onCommandPaletteKey = onCommandPaletteKey
+        textView.onFocusChange = onFocusChange
         if #available(macOS 15.1, *) {
             textView.writingToolsBehavior = .complete
         }
@@ -318,11 +356,14 @@ public struct NativeTextViewWrapper: NSViewRepresentable {
         scrollView.clampToInsets()
         scrollView.reflectScrolledClipView(scrollView.contentView)
 
-        if startsAtDocumentEnd {
+        context.coordinator.lastHandledFocusRequest = focusRequest
+        context.coordinator.lastHandledNavigationRequest = navigationRequest
+        if startsAtDocumentEnd || focusRequest != 0 {
             let end = (textView.string as NSString).length
             let insertionPoint = NSRange(location: end, length: 0)
             textView.setSelectedRange(insertionPoint)
             textView.scrollRangeToVisible(insertionPoint)
+            requestFocusAtDocumentEnd(textView)
         }
 
         context.coordinator.textView = textView
@@ -395,9 +436,21 @@ public struct NativeTextViewWrapper: NSViewRepresentable {
 
     public func updateNSView(_ nsView: NSScrollView, context: Context) {
         guard let textView = nsView.nativeTextView else { return }
+        if context.coordinator.lastHandledFocusRequest != focusRequest {
+            context.coordinator.lastHandledFocusRequest = focusRequest
+            requestFocusAtDocumentEnd(textView)
+        }
+        if context.coordinator.lastHandledNavigationRequest != navigationRequest {
+            context.coordinator.lastHandledNavigationRequest = navigationRequest
+            requestFocus(textView, at: navigationLocation)
+        }
         reconcileHeader(textView: textView, context: context)
 
         let isNodeSwitch = context.coordinator.documentId != documentId
+        let themeChanged = !themesEqual(
+            context.coordinator.configuration.theme,
+            configuration.theme
+        )
 
         // Drop remembered offsets for documents no longer retained (always keep
         // the current one). Only rebuilds the dict when something must go.
@@ -446,8 +499,16 @@ public struct NativeTextViewWrapper: NSViewRepresentable {
 
         textView.onPasteImage = onPasteImage
         textView.onSlashCommand = onSlashCommand
+        textView.onSlashCommandAtCaret = onSlashCommandAtCaret
+        textView.onCommandPaletteKey = onCommandPaletteKey
+        textView.onFocusChange = onFocusChange
         textView.isCursorExcluded = isCursorExcluded
         textView.setPlaceholder(placeholder)
+        // Theme changes are appearance-only transactions. Keep the text and
+        // its undo history intact, but make the live TextKit stack observe the
+        // new palette before the restyle decision below.
+        textView.configuration.theme = configuration.theme
+        context.coordinator.configuration.theme = configuration.theme
         // Sync heightBehavior across all three layers (scroll view, text view,
         // coordinator) so a runtime switch fully reconfigures.
         let heightBehaviorChanged = textView.configuration.heightBehavior != configuration.heightBehavior
@@ -536,9 +597,21 @@ public struct NativeTextViewWrapper: NSViewRepresentable {
             }
             return
         }
-        if context.coordinator.didInitialFormatting
-            && context.coordinator.lastSyncedText == text
-            && !fontChanged {
+        // A theme-only update must not be mistaken for a no-op: the editor's
+        // source text is unchanged, so the old early-return would leave body
+        // text, headings, markers, and typing attributes on the previous color.
+        // Restyling only attributes keeps the native undo stack and Markdown
+        // source untouched. Font/source/document transitions still use the
+        // existing rebuild path below.
+        let needsFullRebuild = isNodeSwitch
+            || rawSourceModeChanged
+            || fontChanged
+            || !context.coordinator.didInitialFormatting
+            || context.coordinator.lastSyncedText != text
+        if !needsFullRebuild {
+            if themeChanged {
+                applyThemeOnly(configuration, to: textView, coordinator: context.coordinator)
+            }
             return
         }
         if fontChanged {
@@ -640,6 +713,82 @@ public struct NativeTextViewWrapper: NSViewRepresentable {
         return coordinator
     }
 }
+
+private extension NativeTextViewWrapper {
+    func requestFocusAtDocumentEnd(_ textView: NSTextView) {
+        DispatchQueue.main.async { [weak textView] in
+            guard let textView else { return }
+            let end = (textView.string as NSString).length
+            let insertionPoint = NSRange(location: end, length: 0)
+            textView.setSelectedRange(insertionPoint)
+            textView.scrollRangeToVisible(insertionPoint)
+            textView.window?.makeFirstResponder(textView)
+        }
+    }
+
+    func requestFocus(_ textView: NSTextView, at sourceLocation: Int) {
+        DispatchQueue.main.async { [weak textView] in
+            guard let textView else { return }
+            let end = (textView.string as NSString).length
+            let location = min(max(0, sourceLocation), end)
+            let insertionPoint = NSRange(location: location, length: 0)
+            textView.setSelectedRange(insertionPoint)
+            textView.scrollRangeToVisible(insertionPoint)
+            textView.window?.makeFirstResponder(textView)
+        }
+    }
+
+    func themesEqual(_ lhs: MarkdownEditorTheme, _ rhs: MarkdownEditorTheme) -> Bool {
+        lhs.bodyText.isEqual(rhs.bodyText)
+            && lhs.mutedText.isEqual(rhs.mutedText)
+            && lhs.disabledText.isEqual(rhs.disabledText)
+            && lhs.headingMarker.isEqual(rhs.headingMarker)
+            && lhs.taskCheckboxAccent.isEqual(rhs.taskCheckboxAccent)
+            && lhs.link.isEqual(rhs.link)
+            && lhs.incompleteLink.isEqual(rhs.incompleteLink)
+            && lhs.findMatchHighlight.isEqual(rhs.findMatchHighlight)
+            && lhs.findCurrentMatchHighlight.isEqual(rhs.findCurrentMatchHighlight)
+            && lhs.latexLightModeText.isEqual(rhs.latexLightModeText)
+            && lhs.latexDarkModeText.isEqual(rhs.latexDarkModeText)
+            && lhs.strikethroughColor.isEqual(rhs.strikethroughColor)
+            && lhs.highlightColor.isEqual(rhs.highlightColor)
+    }
+
+    func applyThemeOnly(
+        _ configuration: MarkdownEditorConfiguration,
+        to textView: NSTextView,
+        coordinator: Coordinator
+    ) {
+        let fullRange = NSRange(location: 0, length: (textView.string as NSString).length)
+        if configuration.rawSourceMode {
+            let (baseFont, paragraphStyle) = TextStylingService.makeBaseFontAndStyle(
+                fontName: fontName,
+                fontSize: fontSize,
+                layoutBridge: coordinator.layoutBridge,
+                configuration: configuration
+            )
+            let baseAttributes: [NSAttributedString.Key: Any] = [
+                .font: baseFont,
+                .foregroundColor: configuration.theme.bodyText,
+                .paragraphStyle: paragraphStyle,
+            ]
+            textView.textStorage?.beginEditing()
+            if fullRange.length > 0 {
+                textView.textStorage?.setAttributes(baseAttributes, range: fullRange)
+            }
+            textView.textStorage?.endEditing()
+            textView.typingAttributes = TextStylingService.makeBaseTypingAttributes(
+                font: baseFont,
+                paragraphStyle: paragraphStyle,
+                theme: configuration.theme
+            )
+            textView.setNeedsDisplay(textView.visibleRect)
+        } else {
+            coordinator.restyleParagraphs([fullRange], in: textView)
+        }
+    }
+}
+
 // MARK: - Scrolling header view
 
 private extension NativeTextViewWrapper {

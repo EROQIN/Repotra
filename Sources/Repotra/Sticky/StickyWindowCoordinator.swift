@@ -167,6 +167,7 @@ final class StickyWindowCoordinator: NSObject, NSWindowDelegate {
         model.onClose = { [weak panel] in panel?.performClose(nil) }
         panel.contentView = NSHostingView(rootView: StickyNoteView(
             model: model,
+            appAppearance: AppAppearanceController.shared,
             importImageFile: importImageFile,
             importImageData: importImageData
         ))

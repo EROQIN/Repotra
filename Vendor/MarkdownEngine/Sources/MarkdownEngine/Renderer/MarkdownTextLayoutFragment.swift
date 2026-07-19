@@ -570,8 +570,8 @@ final class MarkdownTextLayoutFragment: NSTextLayoutFragment {
             let isChecked = (value as? Bool) ?? false
             guard let pos = drawPosition(forDocumentCharAt: attrRange.location, point: point) else { return }
 
-            // Box collapsed to 0.1pt, so pos.x sits at the content edge; the
-            // square is right-aligned to it (shared with the click hit-test).
+            // Marker text is collapsed to 0.1pt, so pos.x sits at the content
+            // edge; the circle is right-aligned to it (shared with hit-test).
             // Use baseFont, NOT NSTextView.font — its getter returns the first
             // char's font (0.1pt in a heading-first doc → 1px boxes).
             let font = (textLayoutManager?.textContainer?.textView as? NativeTextView)?.baseFont
@@ -579,29 +579,54 @@ final class MarkdownTextLayoutFragment: NSTextLayoutFragment {
             let ascent = max(0, font.ascender)
             let descent = max(0, -font.descender)
             let size = TaskCheckboxGeometry.size(for: font)
-            let boxX = TaskCheckboxGeometry.boxX(contentX: pos.x, size: size)
+            let controlX = TaskCheckboxGeometry.controlX(contentX: pos.x, size: size)
             let centerY = pos.baselineY + (descent - ascent) / 2
-            let boxY = centerY - size / 2
+            let controlY = centerY - size / 2
 
             let scale = textLayoutManager?.textContainer?.textView?.window?.backingScaleFactor
                 ?? NSScreen.main?.backingScaleFactor ?? 2.0
             func alignToPixel(_ value: CGFloat) -> CGFloat {
                 (value * scale).rounded(.toNearestOrAwayFromZero) / scale
             }
-            let boxRect = CGRect(x: alignToPixel(boxX), y: alignToPixel(boxY), width: size, height: size)
-            guard !boxRect.isEmpty, !boxRect.isNull else { return }
+            let controlRect = CGRect(
+                x: alignToPixel(controlX),
+                y: alignToPixel(controlY),
+                width: size,
+                height: size
+            )
+            guard !controlRect.isEmpty, !controlRect.isNull else { return }
 
-            let iconInset = max(0.0, size * 0.01)
-            let iconRect = boxRect.insetBy(dx: iconInset, dy: iconInset)
-            let symbolName = isChecked ? "checkmark.square.fill" : "square"
-            if let baseSymbol = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil) {
-                let sizeConfig = NSImage.SymbolConfiguration(pointSize: iconRect.height, weight: .regular)
-                let theme = (textLayoutManager?.textContainer?.textView as? NativeTextView)?.configuration.theme ?? .default
-                let tint = isChecked ? theme.bodyText : theme.mutedText
-                let colorConfig = NSImage.SymbolConfiguration(hierarchicalColor: tint)
-                let symbolConfig = sizeConfig.applying(colorConfig)
-                let symbol = baseSymbol.withSymbolConfiguration(symbolConfig) ?? baseSymbol
-                symbol.draw(in: iconRect)
+            let theme = (textLayoutManager?.textContainer?.textView as? NativeTextView)?.configuration.theme
+                ?? .default
+            if isChecked {
+                context.setFillColor(theme.taskCheckboxAccent.cgColor)
+                context.fillEllipse(in: controlRect)
+
+                let check = CGMutablePath()
+                check.move(to: CGPoint(
+                    x: controlRect.minX + controlRect.width * 0.27,
+                    y: controlRect.minY + controlRect.height * 0.52
+                ))
+                check.addLine(to: CGPoint(
+                    x: controlRect.minX + controlRect.width * 0.43,
+                    y: controlRect.minY + controlRect.height * 0.68
+                ))
+                check.addLine(to: CGPoint(
+                    x: controlRect.minX + controlRect.width * 0.75,
+                    y: controlRect.minY + controlRect.height * 0.34
+                ))
+                context.addPath(check)
+                context.setStrokeColor(NSColor.white.cgColor)
+                context.setLineWidth(max(1.25, size * 0.14))
+                context.setLineCap(.round)
+                context.setLineJoin(.round)
+                context.strokePath()
+            } else {
+                let lineWidth = max(1.0, size * 0.09)
+                let ringRect = controlRect.insetBy(dx: lineWidth / 2, dy: lineWidth / 2)
+                context.setStrokeColor(theme.mutedText.withAlphaComponent(0.78).cgColor)
+                context.setLineWidth(lineWidth)
+                context.strokeEllipse(in: ringRect)
             }
         }
     }

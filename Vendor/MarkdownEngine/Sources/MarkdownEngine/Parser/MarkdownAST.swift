@@ -129,45 +129,41 @@ enum DocumentAST {
 
     /// Parse one list-item line: indent, marker, optional task checkbox, inline content.
     private static func listItem(_ lineRange: NSRange, _ ns: NSString, scoped: Bool = true) -> ListItem {
-        let end = NSMaxRange(lineRange)
-        var i = lineRange.location
-        var indent = 0
-        while i < end, ns.character(at: i) == space || ns.character(at: i) == tab { i += 1; indent += 1 }
-        let markerStart = i
-        var ordered = false
-        var number: Int?
-        let c = i < end ? ns.character(at: i) : 0
-        if c == 0x2D || c == 0x2A || c == 0x2B {        // - * +
-            i += 1
-        } else {                                        // N. / N)
-            var value = 0
-            var digits = 0
-            while i < end, ns.character(at: i) >= 0x30, ns.character(at: i) <= 0x39, digits < 9 {
-                value = value * 10 + Int(ns.character(at: i) - 0x30); i += 1; digits += 1
-            }
+        let line = ns.substring(with: lineRange)
+        guard let structure = MarkdownLineStructure.parseList(line) else {
+            preconditionFailure("BlockParser classified a non-list line as a list item")
+        }
+
+        let ordered: Bool
+        let number: Int?
+        switch structure.kind {
+        case .unordered:
+            ordered = false
+            number = nil
+        case let .ordered(value, _):
             ordered = true
             number = value
-            if i < end { i += 1 }                       // the `.` or `)`
+        case .quote:
+            preconditionFailure("Quote structure reached list item parsing")
         }
-        let marker = NSRange(location: markerStart, length: i - markerStart)
-        if i < end, ns.character(at: i) == space || ns.character(at: i) == tab { i += 1 }
-        var checkbox: NSRange?
-        var checked = false
-        if i + 2 < end, ns.character(at: i) == 0x5B, ns.character(at: i + 2) == 0x5D {   // [ x ]
-            let mid = ns.character(at: i + 1)
-            if mid == space || mid == 0x78 || mid == 0x58 {     // space / x / X
-                checkbox = NSRange(location: i, length: 3)
-                checked = (mid == 0x78 || mid == 0x58)
-                i += 3
-                if i < end, ns.character(at: i) == space || ns.character(at: i) == tab { i += 1 }
-            }
+
+        func absolute(_ range: NSRange) -> NSRange {
+            NSRange(location: lineRange.location + range.location, length: range.length)
         }
-        var contentEnd = end
-        while contentEnd > i, isLineBreak(ns.character(at: contentEnd - 1)) { contentEnd -= 1 }
-        let content = NSRange(location: i, length: max(0, contentEnd - i))
-        return ListItem(range: lineRange, marker: marker, ordered: ordered, number: number,
-                        checkbox: checkbox, checked: checked, indent: indent,
-                        contentRange: content, inlines: scoped ? InlineParser.parse(ns, range: content) : [])
+        let marker = absolute(structure.markerRange)
+        let checkbox = structure.checkboxRange.map(absolute)
+        let content = absolute(structure.contentRange)
+        return ListItem(
+            range: lineRange,
+            marker: marker,
+            ordered: ordered,
+            number: number,
+            checkbox: checkbox,
+            checked: structure.isChecked,
+            indent: structure.indentationRange.length,
+            contentRange: content,
+            inlines: scoped ? InlineParser.parse(ns, range: content) : []
+        )
     }
 
     private static func isLineBreak(_ c: unichar) -> Bool { c == 0x0A || c == 0x0D }

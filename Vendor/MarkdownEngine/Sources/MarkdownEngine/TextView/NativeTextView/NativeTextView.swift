@@ -47,6 +47,9 @@ final class NativeTextView: NSTextView {
     // MARK: Editor wiring
     var onPasteImage: ((NSPasteboard) -> String?)?
     var onSlashCommand: (() -> Void)?
+    var onSlashCommandAtCaret: ((CGRect) -> Void)?
+    var onCommandPaletteKey: ((InlinePreviewKey) -> Bool)?
+    var onFocusChange: ((Bool) -> Void)?
     weak var layoutBridge: LayoutBridge?
     var baseFont: NSFont = NSFont.systemFont(ofSize: NSFont.systemFontSize)
 
@@ -96,6 +99,14 @@ final class NativeTextView: NSTextView {
     }
 
     override func keyDown(with event: NSEvent) {
+        let paletteKey: InlinePreviewKey? = switch event.keyCode {
+        case 126: .moveUp
+        case 125: .moveDown
+        case 36, 76: .confirm
+        case 53: .cancel
+        default: nil
+        }
+        if let paletteKey, onCommandPaletteKey?(paletteKey) == true { return }
         let disallowed = event.modifierFlags.intersection([.command, .control, .option])
         if disallowed.isEmpty,
            event.charactersIgnoringModifiers == "/",
@@ -105,11 +116,41 @@ final class NativeTextView: NSTextView {
             let line = ns.lineRange(for: NSRange(location: caret, length: 0))
             let prefix = ns.substring(with: NSRange(location: line.location, length: caret - line.location))
             if prefix.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                onSlashCommand?()
+                if let onSlashCommandAtCaret {
+                    let fallbackHeight = max(font?.pointSize ?? 16, 16) * 1.35
+                    let fallback = CGRect(
+                        x: textContainerInset.width,
+                        y: textContainerInset.height,
+                        width: 1,
+                        height: fallbackHeight
+                    )
+                    onSlashCommandAtCaret(
+                        viewRect(forCharacterRange: selectedRange(), using: layoutBridge) ?? fallback
+                    )
+                } else {
+                    onSlashCommand?()
+                }
                 return
             }
         }
+        // A palette that is already open should not linger while normal text,
+        // navigation, Backspace, or IME input proceeds. `.cancel` is advisory:
+        // the host returns false when no palette is visible, and the original
+        // key event always continues through AppKit.
+        _ = onCommandPaletteKey?(.cancel)
         super.keyDown(with: event)
+    }
+
+    override func becomeFirstResponder() -> Bool {
+        let accepted = super.becomeFirstResponder()
+        if accepted { onFocusChange?(true) }
+        return accepted
+    }
+
+    override func resignFirstResponder() -> Bool {
+        let accepted = super.resignFirstResponder()
+        if accepted { onFocusChange?(false) }
+        return accepted
     }
 
     deinit { caretIndicatorObservation?.invalidate() }

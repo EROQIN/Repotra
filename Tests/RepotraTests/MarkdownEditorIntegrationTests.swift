@@ -5,6 +5,40 @@ import Testing
 @MainActor
 @Suite("Markdown editor integration")
 struct MarkdownEditorIntegrationTests {
+    @Test("slash palette stays below the caret when space is available")
+    func slashPaletteBelowCaret() {
+        let placement = SlashPalettePlacement.resolve(
+            containerSize: CGSize(width: 500, height: 500),
+            anchor: CGRect(x: 100, y: 100, width: 1, height: 20)
+        )
+        #expect(!placement.opensAbove)
+        #expect(placement.origin == CGPoint(x: 100, y: 126))
+        #expect(placement.width == 230)
+        #expect(placement.maxHeight == 356)
+    }
+
+    @Test("slash palette flips above a caret near the bottom")
+    func slashPaletteAboveCaret() {
+        let placement = SlashPalettePlacement.resolve(
+            containerSize: CGSize(width: 500, height: 500),
+            anchor: CGRect(x: 120, y: 430, width: 1, height: 20)
+        )
+        #expect(placement.opensAbove)
+        #expect(placement.origin == CGPoint(x: 120, y: 68))
+        #expect(placement.maxHeight == 356)
+    }
+
+    @Test("slash palette clamps horizontally and scrolls in a small viewport")
+    func slashPaletteSmallViewport() {
+        let placement = SlashPalettePlacement.resolve(
+            containerSize: CGSize(width: 180, height: 120),
+            anchor: CGRect(x: 170, y: 50, width: 1, height: 20)
+        )
+        #expect(placement.origin == CGPoint(x: 8, y: 8))
+        #expect(placement.width == 164)
+        #expect(placement.maxHeight == 104)
+    }
+
     @Test("formatting commands are isolated per editor")
     func commandIsolation() {
         let first = MarkdownCommandCenter()

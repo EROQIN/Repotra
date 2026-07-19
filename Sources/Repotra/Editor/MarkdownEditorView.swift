@@ -27,6 +27,61 @@ enum MarkdownEditorCommand: Sendable {
     case image
 }
 
+struct SlashPalettePlacement: Equatable {
+    static let preferredWidth: CGFloat = 230
+    static let preferredHeight: CGFloat = 356
+    static let minimumAnchoredHeight: CGFloat = 140
+    static let edgeMargin: CGFloat = 8
+    static let anchorGap: CGFloat = 6
+
+    let origin: CGPoint
+    let width: CGFloat
+    let maxHeight: CGFloat
+    let opensAbove: Bool
+
+    static func resolve(
+        containerSize: CGSize,
+        anchor: CGRect,
+        preferredWidth: CGFloat = preferredWidth,
+        preferredHeight: CGFloat = preferredHeight,
+        minimumAnchoredHeight: CGFloat = minimumAnchoredHeight,
+        margin: CGFloat = edgeMargin,
+        gap: CGFloat = anchorGap
+    ) -> SlashPalettePlacement {
+        let usableWidth = max(1, containerSize.width - margin * 2)
+        let width = min(preferredWidth, usableWidth)
+        let maximumX = max(margin, containerSize.width - margin - width)
+        let x = min(max(anchor.minX, margin), maximumX)
+
+        let usableHeight = max(1, containerSize.height - margin * 2)
+        let below = max(0, containerSize.height - margin - anchor.maxY - gap)
+        let above = max(0, anchor.minY - margin - gap)
+
+        // When neither side can hold a useful command list, use the whole
+        // viewport and let the palette scroll internally. This keeps it inside
+        // very small floating-note windows instead of clipping around the caret.
+        if max(below, above) < minimumAnchoredHeight {
+            return SlashPalettePlacement(
+                origin: CGPoint(x: x, y: margin),
+                width: width,
+                maxHeight: min(preferredHeight, usableHeight),
+                opensAbove: false
+            )
+        }
+
+        let opensAbove = below < minimumAnchoredHeight && above > below
+        let available = opensAbove ? above : below
+        let height = min(preferredHeight, max(1, available))
+        let y = opensAbove ? anchor.minY - gap - height : anchor.maxY + gap
+        return SlashPalettePlacement(
+            origin: CGPoint(x: x, y: min(max(y, margin), max(margin, containerSize.height - margin - height))),
+            width: width,
+            maxHeight: height,
+            opensAbove: opensAbove
+        )
+    }
+}
+
 @MainActor
 @Observable
 final class MarkdownCommandCenter {
@@ -92,14 +147,20 @@ struct MarkdownEditorView: View {
     let rootURL: URL
     var context: MarkdownEditorContext = .main
     var startsAtDocumentEnd = false
+    var focusRequest = 0
+    var navigationRequest = 0
+    var navigationLocation = 0
+    var sourceMode: Binding<Bool>?
     var renderOptions = MarkdownRenderOptions()
     let importImageFile: @MainActor (URL) async -> String?
     let importImageData: @MainActor (Data) async -> String?
 
     @State private var commandCenter = MarkdownCommandCenter()
-    @State private var rawSourceMode = false
+    @State private var localRawSourceMode = false
     @State private var hasTextSelection = false
     @State private var showsBlockMenu = false
+    @State private var selectedSlashAction = 0
+    @State private var slashAnchorRect: CGRect?
     @State private var visibleCodeBlocks: [CodeBlockSelection] = []
     @State private var copiedCodeBlockID: Int?
 
@@ -115,9 +176,23 @@ struct MarkdownEditorView: View {
                 fontSize: renderOptions.fontSize,
                 documentId: session.editorDocumentID.uuidString,
                 startsAtDocumentEnd: startsAtDocumentEnd,
+                focusRequest: focusRequest,
+                navigationRequest: navigationRequest,
+                navigationLocation: navigationLocation,
                 onPasteImage: importImage(from:),
-                onSlashCommand: { showsBlockMenu = true },
-                onSelectionChange: { hasTextSelection = $0.length > 0 },
+                onSlashCommandAtCaret: { anchor in
+                    slashAnchorRect = anchor
+                    selectedSlashAction = 0
+                    showsBlockMenu = true
+                },
+                onCommandPaletteKey: handleSlashPaletteKey,
+                onFocusChange: { focused in
+                    if !focused { dismissSlashPalette() }
+                },
+                onSelectionChange: {
+                    hasTextSelection = $0.length > 0
+                    if showsBlockMenu { dismissSlashPalette() }
+                },
                 onCodeBlockSelectionChange: { selections in
                     DispatchQueue.main.async { visibleCodeBlocks = selections }
                 }
@@ -131,18 +206,32 @@ struct MarkdownEditorView: View {
                     copyCodeBlock(selection)
                 }
             }
-            if context == .main, hasTextSelection || showsBlockMenu {
+            if context == .main, hasTextSelection {
                 editorTools
                     .padding(.top, 12)
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }
-            if context == .main, showsBlockMenu {
-                slashPalette
-                    .padding(.top, 54)
-                    .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
+            if showsBlockMenu, let slashAnchorRect {
+                GeometryReader { geometry in
+                    let placement = SlashPalettePlacement.resolve(
+                        containerSize: geometry.size,
+                        anchor: slashAnchorRect
+                    )
+                    slashPalette(maxHeight: placement.maxHeight)
+                        .frame(width: placement.width, height: placement.maxHeight)
+                        .position(
+                            x: placement.origin.x + placement.width / 2,
+                            y: placement.origin.y + placement.maxHeight / 2
+                        )
+                }
+                .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
+                .zIndex(20)
             }
         }
         .animation(.easeOut(duration: 0.14), value: hasTextSelection)
+        .animation(.easeOut(duration: 0.14), value: showsBlockMenu)
+        .onChange(of: session.editorDocumentID) { _, _ in dismissSlashPalette() }
+        .onDisappear { dismissSlashPalette() }
         .focusedSceneValue(\.markdownCommandCenter, commandCenter)
     }
 
@@ -153,7 +242,9 @@ struct MarkdownEditorView: View {
         theme.mutedText = renderOptions.textColor.withAlphaComponent(0.48)
         theme.disabledText = renderOptions.textColor.withAlphaComponent(0.28)
         theme.headingMarker = renderOptions.textColor.withAlphaComponent(0.35)
-        theme.link = NSColor.systemBlue
+        theme.taskCheckboxAccent = renderOptions.accentColor
+        theme.link = renderOptions.accentColor
+        theme.strikethroughColor = renderOptions.textColor.withAlphaComponent(0.46)
         theme.highlightColor = NSColor.systemYellow.withAlphaComponent(0.28)
         value.theme = theme
         value.services = MarkdownEditorServices(
@@ -161,8 +252,8 @@ struct MarkdownEditorView: View {
             syntaxHighlighter: Self.codeHighlighter,
             bus: commandCenter.bus
         )
-        value.readingWidth = context == .main ? 720 : nil
-        value.rawSourceMode = rawSourceMode
+        value.readingWidth = context == .main ? (renderOptions.readingWidth ?? 720) : nil
+        value.rawSourceMode = isRawSourceMode
         value.textInsets = TextInsets(
             horizontal: context == .main ? 40 : 18,
             vertical: context == .main ? 46 : 24
@@ -198,19 +289,20 @@ struct MarkdownEditorView: View {
             } label: {
                 Image(systemName: "plus")
                     .frame(width: 28, height: 26)
+                    .repotraHoverFeedback()
             }
             .menuStyle(.borderlessButton)
             .menuIndicator(.hidden)
             .help("插入块 / Markdown 命令")
 
             Button {
-                rawSourceMode.toggle()
+                toggleSourceMode()
             } label: {
-                Image(systemName: rawSourceMode ? "doc.richtext.fill" : "chevron.left.forwardslash.chevron.right")
+                Image(systemName: isRawSourceMode ? "doc.richtext.fill" : "chevron.left.forwardslash.chevron.right")
                     .frame(width: 28, height: 26)
             }
-            .buttonStyle(.plain)
-            .help(rawSourceMode ? "返回融合视图" : "显示 Markdown 源码")
+            .buttonStyle(RepotraHoverButtonStyle())
+            .help(isRawSourceMode ? "返回融合视图" : "显示 Markdown 源码")
         }
         .padding(5)
         .background(.ultraThinMaterial, in: Capsule())
@@ -218,30 +310,104 @@ struct MarkdownEditorView: View {
         .shadow(color: .black.opacity(0.12), radius: 12, y: 5)
     }
 
-    private var slashPalette: some View {
-        VStack(alignment: .leading, spacing: 2) {
+    private func slashPalette(maxHeight: CGFloat) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
             Text("插入 Markdown")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-            slashButton("正文", icon: "textformat", command: .heading(0))
-            slashButton("一级标题", icon: "textformat.size.larger", command: .heading(1))
-            slashButton("引用", icon: "text.quote", command: .blockquote)
-            slashButton("无序列表", icon: "list.bullet", command: .unorderedList)
-            slashButton("有序列表", icon: "list.number", command: .orderedList)
-            slashInsert("任务列表", icon: "checklist", markdown: "- [ ] ")
-            slashButton("代码块", icon: "chevron.left.forwardslash.chevron.right", command: .codeBlock)
-            slashInsert("表格 3×3", icon: "tablecells", markdown: "| A | B | C |\n|---|---|---|\n|   |   |   |\n|   |   |   |\n")
-            slashInsert("脚注", icon: "textformat.superscript", markdown: "[^1]\n\n[^1]: ")
-            slashInsert("目录", icon: "list.bullet.indent", markdown: "[TOC]\n")
-            slashInsert("YAML Front Matter", icon: "slider.horizontal.3", markdown: "---\ntitle: \n---\n")
+                .padding(.vertical, 7)
+            Divider().opacity(0.55)
+            ScrollViewReader { scrollProxy in
+                ScrollView(.vertical) {
+                    LazyVStack(alignment: .leading, spacing: 2) {
+                        ForEach(Array(slashActions.enumerated()), id: \.element.id) { index, action in
+                            Button { executeSlashAction(index) } label: {
+                                Label(action.title, systemImage: action.icon)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 5)
+                            }
+                            .buttonStyle(RepotraHoverButtonStyle(isSelected: index == selectedSlashAction))
+                            .focusable(false)
+                            .id(action.id)
+                            .accessibilityIdentifier("markdown-slash-action-\(action.id)")
+                            .accessibilityLabel(action.title)
+                            .accessibilityValue(index == selectedSlashAction ? "已选择" : "")
+                        }
+                    }
+                    .padding(6)
+                }
+                .scrollIndicators(.automatic)
+                .onChange(of: selectedSlashAction) { _, index in
+                    guard slashActions.indices.contains(index) else { return }
+                    withAnimation(.easeOut(duration: 0.1)) {
+                        scrollProxy.scrollTo(slashActions[index].id, anchor: .center)
+                    }
+                }
+            }
         }
-        .padding(6)
-        .frame(width: 230)
+        .frame(maxHeight: maxHeight)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 11))
         .overlay(RoundedRectangle(cornerRadius: 11).stroke(.separator.opacity(0.45), lineWidth: 0.5))
         .shadow(color: .black.opacity(0.18), radius: 18, y: 8)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("markdown-slash-palette")
+        .accessibilityLabel("插入 Markdown")
+    }
+
+    private struct SlashAction {
+        let id: String
+        let title: String
+        let icon: String
+        let command: MarkdownEditorCommand?
+        let markdown: String?
+    }
+
+    private var slashActions: [SlashAction] {
+        [
+            .init(id: "body", title: "正文", icon: "textformat", command: .heading(0), markdown: nil),
+            .init(id: "heading-1", title: "一级标题", icon: "textformat.size.larger", command: .heading(1), markdown: nil),
+            .init(id: "quote", title: "引用", icon: "text.quote", command: .blockquote, markdown: nil),
+            .init(id: "unordered-list", title: "无序列表", icon: "list.bullet", command: .unorderedList, markdown: nil),
+            .init(id: "ordered-list", title: "有序列表", icon: "list.number", command: .orderedList, markdown: nil),
+            .init(id: "task-list", title: "任务列表", icon: "checklist", command: nil, markdown: "- [ ] "),
+            .init(id: "code-block", title: "代码块", icon: "chevron.left.forwardslash.chevron.right", command: .codeBlock, markdown: nil),
+            .init(id: "table", title: "表格 3×3", icon: "tablecells", command: nil, markdown: "| A | B | C |\n|---|---|---|\n|   |   |   |\n|   |   |   |\n"),
+            .init(id: "footnote", title: "脚注", icon: "textformat.superscript", command: nil, markdown: "[^1]\n\n[^1]: "),
+            .init(id: "toc", title: "目录", icon: "list.bullet.indent", command: nil, markdown: "[TOC]\n"),
+            .init(id: "front-matter", title: "YAML Front Matter", icon: "slider.horizontal.3", command: nil, markdown: "---\ntitle: \n---\n")
+        ]
+    }
+
+    private var isRawSourceMode: Bool { sourceMode?.wrappedValue ?? localRawSourceMode }
+
+    private func toggleSourceMode() {
+        if let sourceMode { sourceMode.wrappedValue.toggle() } else { localRawSourceMode.toggle() }
+    }
+
+    private func handleSlashPaletteKey(_ key: InlinePreviewKey) -> Bool {
+        guard showsBlockMenu else { return false }
+        switch key {
+        case .moveUp: selectedSlashAction = max(0, selectedSlashAction - 1)
+        case .moveDown: selectedSlashAction = min(slashActions.count - 1, selectedSlashAction + 1)
+        case .confirm, .confirmAndOpen: executeSlashAction(selectedSlashAction)
+        case .cancel: dismissSlashPalette()
+        }
+        return true
+    }
+
+    private func executeSlashAction(_ index: Int) {
+        guard slashActions.indices.contains(index) else { return }
+        let action = slashActions[index]
+        dismissSlashPalette()
+        if let command = action.command { commandCenter.perform(command) }
+        if let markdown = action.markdown { commandCenter.insert(markdown) }
+    }
+
+    private func dismissSlashPalette() {
+        showsBlockMenu = false
+        slashAnchorRect = nil
     }
 
     private func slashButton(_ title: String, icon: String, command: MarkdownEditorCommand) -> some View {
@@ -251,7 +417,7 @@ struct MarkdownEditorView: View {
         } label: {
             Label(title, systemImage: icon).frame(maxWidth: .infinity, alignment: .leading)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(RepotraHoverButtonStyle())
         .padding(.horizontal, 8)
         .padding(.vertical, 5)
     }
@@ -263,7 +429,7 @@ struct MarkdownEditorView: View {
         } label: {
             Label(title, systemImage: icon).frame(maxWidth: .infinity, alignment: .leading)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(RepotraHoverButtonStyle())
         .padding(.horizontal, 8)
         .padding(.vertical, 5)
     }
@@ -272,7 +438,7 @@ struct MarkdownEditorView: View {
         Button { commandCenter.perform(command) } label: {
             Image(systemName: systemName).frame(width: 28, height: 26)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(RepotraHoverButtonStyle())
         .help(help)
     }
 
@@ -315,6 +481,8 @@ struct MarkdownRenderOptions {
     var fontFamily = "SF Pro"
     var fontSize: CGFloat = 16
     var textColor: NSColor = .labelColor
+    var accentColor: NSColor = .controlAccentColor
+    var readingWidth: CGFloat?
 }
 
 private struct LibraryAssetProvider: EmbeddedImageProvider, @unchecked Sendable {

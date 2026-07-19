@@ -11,13 +11,6 @@ import AppKit
 import Foundation
 
 extension MarkdownStyler {
-
-    /// Indented bullet marker at line start (trailing space excludes `---`/`*bold*`), not a checkbox.
-    static let bulletListRegex: NSRegularExpression = try! NSRegularExpression(
-        pattern: #"^([ \t]*)([-*+])([ \t]+)(?!\[[ xX]\])"#,
-        options: [.anchorsMatchLines]
-    )
-
     // MARK: Bullet Syntax Membership
 
     /// `<marker><spaces>` range on `location`'s line, or `nil` if the caret isn't strictly inside.
@@ -26,17 +19,11 @@ extension MarkdownStyler {
         let safeLoc = max(0, min(location, nsText.length))
         let lineRange = nsText.lineRange(for: NSRange(location: safeLoc, length: 0))
         let line = nsText.substring(with: lineRange)
-        guard let match = bulletListRegex.firstMatch(
-            in: line,
-            options: [],
-            range: NSRange(location: 0, length: line.utf16.count)
-        ) else { return nil }
-        let markerLineRange = match.range(at: 2)
-        let spacerLineRange = match.range(at: 3)
-        guard markerLineRange.location != NSNotFound,
-              spacerLineRange.location != NSNotFound else { return nil }
-        let syntaxStart = lineRange.location + markerLineRange.location
-        let syntaxEnd = lineRange.location + spacerLineRange.location + spacerLineRange.length
+        guard let structure = MarkdownLineStructure.parseList(line),
+              structure.checkboxRange == nil,
+              case .unordered = structure.kind else { return nil }
+        let syntaxStart = lineRange.location + structure.syntaxRange.location
+        let syntaxEnd = syntaxStart + structure.syntaxRange.length
         let syntaxRange = NSRange(location: syntaxStart, length: syntaxEnd - syntaxStart)
         if NSLocationInRange(location, syntaxRange) {
             return syntaxRange

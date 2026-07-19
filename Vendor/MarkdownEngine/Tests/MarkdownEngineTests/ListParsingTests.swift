@@ -52,6 +52,19 @@ struct ListParsingTests {
         #expect(items("- [ ] todo\n")?.first?.checkbox != nil)
     }
 
+    @Test func terminalTaskCheckboxUsesTheSharedStructureParser() {
+        for source in ["- [ ]", "* [x]", "+ [X]", "1. [ ]", "1) [x]"] {
+            #expect(BlockParser.isListItem(source))
+            #expect(items(source)?.first?.checkbox != nil, "failed to parse \(source.debugDescription)")
+        }
+    }
+
+    @Test func taskRequiresWhitespaceBeforeFollowingContent() {
+        let item = items("- [ ]text")?.first
+        #expect(item?.checkbox == nil)
+        #expect(item.map { ("- [ ]text" as NSString).substring(with: $0.contentRange) } == "[ ]text")
+    }
+
     @Test func indentIsCaptured() {
         #expect(items("    - nested\n")?.first?.indent == 4)
     }
@@ -84,6 +97,8 @@ struct ListParsingTests {
         #expect(MarkdownStyler.taskSyntaxRange(at: 0, in: "- [ ] task") != nil)
         #expect(MarkdownStyler.taskSyntaxRange(at: 0, in: "* [ ] task") != nil)
         #expect(MarkdownStyler.taskSyntaxRange(at: 0, in: "+ [ ] task") != nil)
+        #expect(MarkdownStyler.taskSyntaxRange(at: 5, in: "- [ ]") != nil)
+        #expect(MarkdownStyler.taskSyntaxRange(at: 6, in: "1) [ ]") != nil)
     }
 
     /// A bare marker with no following space is NOT a list yet — typing `-`
@@ -93,9 +108,11 @@ struct ListParsingTests {
         #expect(!BlockParser.isListItem("-"))
         #expect(!BlockParser.isListItem("*"))
         #expect(!BlockParser.isListItem("1."))
+        #expect(!BlockParser.isListItem("1)"))
         #expect(!hasList(BlockParser.parse("-")))
         #expect(BlockParser.isListItem("- "))
         #expect(BlockParser.isListItem("- x"))
         #expect(BlockParser.isListItem("1. x"))
+        #expect(BlockParser.isListItem("1) x"))
     }
 }
